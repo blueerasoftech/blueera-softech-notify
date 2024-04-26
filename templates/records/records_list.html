@@ -1,0 +1,326 @@
+{% extends "partials/base.html" %}
+{% load static %}
+{% block title %}Records{% endblock title %}
+{% block extra_css %}
+
+<!--datatable css-->
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+
+
+
+{% endblock extra_css %}
+{% block content %}
+            <!-- ============================================================== -->
+            <!-- Start right Content here -->
+            <!-- ============================================================== -->
+            <div class="main-content">
+
+                <div class="page-content">
+                    <div class="container-fluid">
+
+                        {% block pagetitle %}
+                        {% include "partials/page-title.html" with pagetitle="Records" title="Records List" %}
+                        {% endblock pagetitle %}
+
+                        {% block alerts %}
+                            {% include "partials/errors.html" with messages=messages %}
+                        {% endblock alerts %}
+    
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <div class="card" id="recordList">
+                                    <div class="card-header border-0">
+                                        <div class="row align-items-center gy-3">
+                                            <div class="col-sm">
+                                                <h5 class="card-title mb-0">Records List</h5>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="card-body border border-dashed border-bottom-0 border-end-0 border-start-0">
+                                        <form>
+                                            <div class="row g-3">
+                                                <div class="col-xxl-6 col-sm-6">
+                                                    <div class="search-box">
+                                                        <input type="text" id="searchBox" class="form-control search"
+                                                            placeholder="Search for Record ID, Alert, Shift, WhatsApp Template etc...">
+                                                        <i class="ri-search-line search-icon"></i>
+                                                    </div>
+                                                </div>
+                                                <!--end col-->
+                                                <div class="col-xxl-3 col-sm-6">
+                                                    <div>
+                                                        <input type="text" 
+                                                        class="form-control flatpickr-input" 
+                                                        data-provider="flatpickr"
+                                                        data-date-format="d M, Y" 
+                                                        data-range-date="true" 
+                                                        id="date_filter"
+                                                        placeholder="Select date" readonly="readonly" value="{% if last_mnt_dt_str is not None %}{{ last_mnt_dt_str|default:'' }} to {% endif %}{{ today_dt_str|default:'' }}">
+                                                    </div>
+                                                </div>
+                                                <!--end col-->
+                                                <div class="col-xxl-3 col-sm-4">
+                                                    <div>
+                                                        <select class="form-control" data-choices data-choices-search-false
+                                                            name="choices-single-default" id="alert_filter">
+                                                            <option value="" selected>All Alerts</option>
+                                                            {% for alert in alerts %}
+                                                                <option value="{{ alert.id }}">{{ alert.name }}</option>
+                                                            {% endfor %}
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <!--end col-->
+                                                
+                                                <!--end col-->
+                                            </div>
+                                            <!--end row-->
+                                        </form>
+                                    </div>
+
+                                    <div class="card-body pt-0">
+                                        <div class="mt-3">
+                                            <div class="table-responsive table-card mb-1 DataTableContainer">
+                                                <table class="table table-nowrap align-middle " id="recordListTable">
+                                                    <thead class="text-muted table-light">
+                                                        <tr class="text-uppercase">
+                                                            <th class="text-center">Sr No</th>
+                                                            <th class="text-center">User Id</th>
+                                                            <th class="">Name</th>
+                                                            <th class="">Alert Type</th>
+                                                            <th class="">WhatsApp Template</th>
+                                                            <th class="text-center">Time</th>
+                                                            <th class="text-center">Mobile</th>
+                                                            <th class="text-center">Delivery Status</th>
+                                                            <th class="text-center">Action</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody class="list form-check-all">
+                                                    </tbody>
+                                                </table>
+                                                </div>
+                                            </div>
+                                            
+                                        </div>
+                                    </div>
+
+                                    
+                                </div>
+            
+                            </div>
+                            <!--end col-->
+                        </div>
+                        <!--end row-->            
+                        
+                    </div>
+                    <!-- container-fluid -->
+                </div>
+                <!-- End Page-content -->
+
+            {% block footer %}
+            {% include "partials/footer.html" %}
+            {% endblock footer %}
+            </div>
+            <!-- end main content-->
+{% endblock content %}
+
+{% block extra_js %}
+<!-- list.js min js -->
+{% comment %} <script src="{% static 'libs/list.js/list.min.js'%}"></script> {% endcomment %}
+
+<!--list pagination js-->
+{% comment %} <script src="{% static 'libs/list.pagination.js/list.pagination.min.js'%}"></script> {% endcomment %}
+
+
+
+<!--datatable js-->
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+
+
+
+<script>
+
+
+$(document).ready(function () {
+    var startDate;
+    var endDate;
+
+    $.fn.dataTable.ext.errMode = 'none';
+     var oTable = $('#recordListTable').on( 'error.dt', function ( e, settings, techNote, message ) {
+        console.log( 'An error has been reported by DataTables: ', message );
+        $(".noresultContainer").show();
+    }).dataTable({
+        "processing": true,
+        "serverSide": true,
+        "paging": true,
+        "lengthChange": true,
+        "lengthMenu": [10, 25, 50, 100],
+        "info": true,
+        "ordering": false,
+        "searching": true,
+        "ajax": {
+            url: "{{ ajax_url }}",
+            type: "POST",
+            beforeSend: function () {
+                $('#spinner-div').show();
+            },
+            complete: function () {
+                $('#spinner-div').hide();
+            },
+            async: false,    //This line is very important to make expose value of statusArray Globally
+            data: function (d) {
+                // Add the date range parameters to the Ajax request
+                d.start_date = startDate;
+                d.end_date = endDate;
+            }, 
+            dataSrc: "data",
+        },
+        "drawCallback": function (data) {
+           // console.log(data);
+           //If data is not availble then it will show noresult image
+           if (data.oAjaxData.length <= 0){
+                $(".noresultContainer").show();
+            }
+        },
+        "rowCallback": function (nRow, aData, iDisplayIndex) {
+            var oSettings = this.fnSettings ();
+            $("td:first", nRow).html(oSettings._iDisplayStart+iDisplayIndex +1);
+            return nRow;
+        },
+        "columns": [
+                    { "data" : "UserID",
+                        createdCell: function (td, cellData, rowData, row, col) {
+                            $(td).css('text-align', 'center');
+                        }
+                    },//This is just fake entry to avoid error of AJAX, SR numbers are loaded with iDislayIndex configured above
+                    { "data" : "UserID",
+                        createdCell: function (td, cellData, rowData, row, col) {
+                            $(td).css('text-align', 'center');}
+                    },
+                    { "data": "UserName" },
+                    { "data": "alert_name" },
+                    { "data": "whatsapp_template_name" },
+                    {
+                        "data": "created_at",
+                        "render": function (data, type, row) {
+                          // Apply the formatDate function to format the date value
+                          return formatDate(data); 
+                        },
+                        createdCell: function (td, cellData, rowData, row, col) {
+                            $(td).css('text-align', 'center');
+                        }
+                    },
+                    { "data": "mobile",
+                        createdCell: function (td, cellData, rowData, row, col) {
+                            $(td).css('text-align', 'center');} 
+                    },
+                    {
+                        "data": "whatsapp_msg_status",
+                        "render": function (data, type, row) {
+                          // Apply the getDeliveryStatusBadge function fetch status badge
+                          return getDeliveryStatusBadge(data);
+                        },
+                        createdCell: function (td, cellData, rowData, row, col) {
+                            $(td).css('text-align', 'center');
+                        }
+                    },
+                    {
+                        "data": "record_detail_url",
+                        "render": function (data, type, row) {
+                          // Apply the formatDate function to format the date value
+                          return (`<ul class="list-inline hstack gap-2 mb-0">
+                            <li class="list-inline-item m-auto" data-bs-toggle="tooltip"
+                                data-bs-trigger="hover" data-bs-placement="top"
+                                title="View">
+                                <a href="${data}"
+                                    class="text-primary d-inline-block">
+                                    <i class="ri-eye-fill fs-16"></i>
+                                </a>
+                            </li>
+                        </ul>`);
+                        },
+                        createdCell: function (td, cellData, rowData, row, col) {
+                            $(td).css('text-align', 'center');
+                        }
+                    }
+                ],
+                "dom": '<"top">rt<"bottom"lpi><"clear">'
+                //t = table, l = length, i = information, p = pagination
+
+    });
+
+    //Search & Filters
+    var oTableapi = oTable.api();
+    var dateRange;
+    var alert;
+
+    $("#searchBox").on('keyup', function (){
+        oTable.fnFilter(this.value);
+    });
+
+    $("#date_filter, #alert_filter").change(function() {
+        dateRange = $("#date_filter").val();
+        alert = $("#alert_filter").val();
+        oTableapi.ajax.url('{{ ajax_url }}?date_range=' + dateRange + '&alert=' + alert).load();
+    });
+
+   
+
+
+    function formatDate(dateString) {
+        // Convert the date string to a Date object
+        const dateObject = new Date(dateString);
+        
+        // Check if the dateObject is valid (not NaN)
+        if (isNaN(dateObject.getTime())) {
+        return '-';
+        }
+    
+        // Get day, month, and year components
+        const day = dateObject.getDate();
+        const month = dateObject.toLocaleString('default', { month: 'short' });
+        const year = dateObject.getFullYear();
+    
+        // Get hours and minutes components
+        const hours = dateObject.getHours().toString().padStart(2, '0');
+        const minutes = dateObject.getMinutes().toString().padStart(2, '0');
+        const amOrPm = hours >= 12 ? 'PM' : 'AM';
+    
+        // Construct the formatted HTML for date and time
+        return `${day} ${month}, ${year}, <small class="text-muted">${hours}:${minutes}${amOrPm}</small>`;
+    }   
+    function getDeliveryStatusBadge(whatsapp_msg_status) {
+        if (whatsapp_msg_status === 'pending') {
+        return '<span class="badge badge-soft-warning text-uppercase">Pending</span>';
+        } else if (whatsapp_msg_status === 'send') {
+        return '<span class="badge badge-soft-secondary text-uppercase">Send</span>';
+        } else if (whatsapp_msg_status === 'system_send') {
+        return '<span class="badge badge-soft-secondary text-uppercase">Send</span>';
+        } else if (whatsapp_msg_status === 'failed') {
+        return '<span class="badge badge-soft-danger text-uppercase">Failed</span>';
+        } else if (whatsapp_msg_status === 'delivered') {
+        return '<span class="badge badge-soft-info text-uppercase">Delivered</span>';
+        } else if (whatsapp_msg_status === 'read') {
+        return '<span class="badge badge-soft-success text-uppercase">Read</span>';
+        } else {
+        return '<span class="badge badge-soft-warning text-uppercase">Pending</span>';
+        }
+    }
+
+        $("#records-datepicker").flatpickr({
+            mode: 'range',
+            defaultDate: ["today", "today"]
+        });
+
+        // Apply Select2 to the child select element
+        var tableLengthDropdown = document.querySelector('.dataTables_length select');
+        new Choices(tableLengthDropdown,{ searchEnabled: false });
+
+    
+}); 
+  
+      
+</script>
+
+
+{% endblock extra_js %}

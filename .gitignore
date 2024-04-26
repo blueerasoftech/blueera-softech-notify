@@ -1,0 +1,58 @@
+# Ignore virtual environment
+# env/
+# .env
+
+# Ignore database files
+*.sqlite3
+*.sqlite
+*.db
+
+# Ignore media files
+/media/
+
+# Ignore compiled Python files
+__pycache__/
+
+# Ignore IDE-specific files
+.idea/
+.vscode/
+
+# Ignore log files
+*.log
+
+# Ignore backup files
+*.bak
+
+# Ignore cache files
+*.cache/
+
+# Ignore coverage reports
+htmlcov/
+
+# Ignore pycache
+__pycache__/
+
+
+# Ignore migration history files
+*/migrations/*.py
+*/migrations/
+**/migrations/
+*/migrations/*.pyc
+*/migrations/__pycache__/
+migrations/
+apps/main/mains/migrations/*
+
+bes_setup/db/
+bes_setup/files/
+
+
+# Ignore generated configuration files
+*.conf
+
+node_modules/
+.DS_Store
+
+
+jobs.sqlite
+bes_setup/db/db_status.json
+bes_setup/files/db_status.json

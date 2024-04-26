@@ -1,0 +1,123 @@
+{% extends "partials/base.html" %}
+{% load static %}
+{% block title %}WhatsApp API Configuration{% endblock title %}
+{% block extra_css %}
+{% endblock extra_css %}
+{% block content %}
+            <!-- ============================================================== -->
+            <!-- Start right Content here -->
+            <!-- ============================================================== -->
+            <div class="main-content">
+
+                <div class="page-content">
+                    <div class="container-fluid">
+
+                        {% block pagetitle %}
+                        {% include "partials/page-title.html" with pagetitle="Settings" title="WhatsApp API Configurations" %}
+                        {% endblock pagetitle %}
+
+                        {% block alerts %}
+                            {% include "partials/errors.html" with messages=messages %}
+                        {% endblock alerts %}
+    
+                        <div class="row">
+                            <div class="col-xl-9">
+                                <div class="card" id="whatsapp_card">
+                                    <div class="card-header border-1">
+                                        <div class="row align-items-center gy-3">
+                                            <div class="col-sm">
+                                                <h5 class="card-title mb-0">WhatsApp API Configuration</h5>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="card-body pt-3">
+                                        <form method="post" id="whatsapp_configuration_form" action="{% url 'apps.main.settings:whatsapp-settings-update' %}">
+                                            {% csrf_token %}
+                                            <div class="col-xxl-6 col-md-6">
+                                                <label for="phone_id" class="form-label">Phone Number ID</label>
+                                                <input type="text" class="form-control" name="wa_phone_number_id" id="phone_id" value="{{ configData.wa_phone_number_id|default:"" }}">
+                                            </div>
+
+                                        
+                                            <div class="mt-3">
+                                                <div class="col-xxl-6 col-md-6">
+                                                    <label for="business_id" class="form-label">Business Account ID</label>
+                                                    <input type="text" class="form-control" name="wa_bussiness_account_id" id="business_id" value="{{ configData.wa_bussiness_account_id|default:"" }}">
+                                                </div>
+                                            </div>
+
+                                            <div class="mt-3">
+                                                <div class="col-xxl-6 col-md-6">
+                                                    <label for="auth_token" class="form-label">Authorization Token</label>
+                                                    <textarea rows="5" class="form-control" name="wa_auth_token" id="auth_token" value="{{ configData.wa_auth_token|default:"" }}">{{ configData.wa_auth_token|default:"" }}</textarea>
+                                                </div>
+                                            </div>
+
+                                            <div class="mt-3">
+                                                <div class="col-xxl-6 col-md-6">
+                                                    <label for="webhook_token" class="form-label">Webhook Token</label>
+                                                    <input type="text" class="form-control" name="wa_webhook_token" id="webhook_token" value="{{ configData.wa_webhook_token|default:"" }}">
+                                                    {% if configData.wa_webhook_token is not None and configData.wa_webhook_token != "" %}
+                                                        <div class="mt-3">
+                                                            <span class="submit_whatsapp_form_status">Config Url - {{ request.scheme }}://{{ request.get_host }}{{ webhook_config_url }} </span>
+                                                        </div>
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+
+                                            <div class="col-sm-auto mt-4">
+                                                <div class="gap-1 flex-wrap">
+                                                    <button type="submit" class="btn btn-success add-btn" id="whatsapp_submit_btn"><i class="ri-save-line align-bottom me-1"></i> Submit</button>
+                                                </div>
+                                                <div class="mt-3">
+                                                    <span class="submit_whatsapp_form_status"></span>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+
+                                    <div class="card-footer border-1">
+                                        <form method="post" id="test_message_form" action="{% url 'apps.main.settings:whatsapp-settings-test' %}">
+                                            {% csrf_token %}
+                                            <div class="row align-items-center gy-3">
+                                                <div class="mt-3 d-flex mb-3">
+                                                    <div class="col-xxl-6 col-md-6">
+                                                        <label for="test_number" class="form-label">Enter Test Number</label>
+                                                        <input type="text" class="form-control" name="wa_test_phone_number" id="test_number" value="{{ configData.wa_test_phone_number|default:"" }}">
+                                                    </div>
+                                                    <div class="col-sm-auto" style="margin-left:15px;">
+                                                        <label for="" class="form-label" style="color:white;"> .</label>
+                                                        <div class=" gap-1 flex-wrap">
+                                                            <button type="submit" class="btn btn-success add-btn" id="test_msg_btn" ><i class="ri-whatsapp-line align-bottom me-1"></i> Test Message</button>
+                                                            <a href="{% url 'apps.main.settings:whatsapp-settings' %}" {% if configData.wa_test_phone_number is None or  configData.wa_test_phone_number == "" %} disabled {% endif %} style="margin-left:15px;" type="button" class="btn btn-success add-btn" id="delivery_status_btn"><i class="ri-mail-unread-line align-bottom me-1"></i> Delivery Status</a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            {% if configData.wa_test_phone_number is not None and  configData.wa_test_phone_number != "" %}
+                                                <span class="test_message_status">Msg Status - <strong>{{ configData.wa_test_number_status|default:""|capfirst }} </strong> [{{ configData.wa_msg_timestamp|date:'d-m-Y h:i A' }}]</span>
+                                                <br>
+                                                {% if configData.wa_msg_error is not None and configData.wa_msg_error != "" %}
+                                                    <span style="color: #F06548">{{ configData.wa_msg_error }} - [{{ configData.wa_msg_error_code }}]</span>
+                                                {% endif %}
+                                            {% endif %}
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                            <!--end col-->
+                        </div>
+                        <!--end row-->            
+                        
+                    
+                    </div>
+                    <!-- container-fluid -->
+                </div>
+                <!-- End Page-content -->
+
+            {% block footer %}
+            {% include "partials/footer.html" %}
+            {% endblock footer %}
+            </div>
+            <!-- end main content-->
+{% endblock content %}

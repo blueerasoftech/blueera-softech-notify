@@ -1,0 +1,163 @@
+{% extends "partials/base.html" %}
+{% load static %}
+{% block title %}Database Settings{% endblock title %}
+{% block extra_css %}
+{% endblock extra_css %}
+{% block content %}
+            <!-- ============================================================== -->
+            <!-- Start right Content here -->
+            <!-- ============================================================== -->
+            <div class="main-content">
+
+                <div class="page-content">
+                    <div class="container-fluid">
+
+                        {% block pagetitle %}
+                        {% include "partials/page-title.html" with pagetitle="Settings" title="Database Settings" %}
+                        {% endblock pagetitle %}
+
+                        {% block alerts %}
+                            {% include "partials/errors.html" with messages=messages %}
+                        {% endblock alerts %}
+    
+                        <div class="row">
+                            <div class="col-xl-9">
+
+                                <div class="card" id="database_card">
+                                    <div class="card-header border-1">
+                                        <div class="row align-items-center gy-3">
+                                            <div class="col-sm">
+                                                <h5 class="card-title mb-0">Database Settings</h5>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="card-body pt-3">
+                                        <form method="post" id="database_configuration_form" action="{% url 'apps.main.settings:database-settings-update' %}">
+                                            {% csrf_token %}
+                                            <div class="col-xxl-6 col-md-6">
+                                                <label for="db_host" class="form-label">Host</label>
+                                                <input type="text" class="form-control" name="db_host" id="db_host" value="{{ db_blueera.HOST|default:"" }}" disabled>
+                                            </div>
+
+                                            <div class="mt-3 col-xxl-6 col-md-6">
+                                                <label for="db_port" class="form-label">Port</label>
+                                                <input type="text" class="form-control" name="db_port" id="db_port" value="{{ db_blueera.PORT|default:"" }}" disabled>
+                                            </div>
+
+                                            <div class="mt-3 col-xxl-6 col-md-6">
+                                                <label for="db_type" class="form-label" style="margin-right: 15px;">DB Type:</label>
+                                                
+                                                <div class="form-check form-check-inline mb-2">
+                                                    <input class="form-check-input" type="radio" name="db_type" id="db_type" value="mssql" {% if db_blueera.ENGINE == 'mssql' %} checked {% endif %} disabled>
+                                                    <label class="form-check-label" for="db_type">
+                                                        Microsoft SQL (MSSQL)
+                                                    </label>
+                                                </div>
+
+                                                <div class="form-check form-check-inline mb-2">
+                                                    <input class="form-check-input" type="radio" name="db_type" id="db_type" value="mysql" {% if db_blueera.ENGINE != 'mssql' %} checked {% endif %} disabled>
+                                                    <label class="form-check-label" for="db_type">
+                                                        MySQL
+                                                    </label>
+                                                </div>
+                                            </div>
+
+                                            <div class="mt-3 col-xxl-6 col-md-6 db_driver_parent">
+                                                <label for="db_driver" class="form-label">Database Driver</label>
+                                                    <select class="form-control" data-choices data-choices-search-false
+                                                            name="db_driver" id="db_driver" disabled>
+                                                            {% for driver in drivers %}
+                                                                <option value="{{ driver }}" {% if db_blueera.OPTIONS is not None and db_blueera.OPTIONS == driver %} selected {% endif %}>{{ driver }}</option>
+                                                            {% endfor %}
+                                                    </select>
+                                                </label>
+                                            </div>
+
+                                            <div class="mt-3 col-xxl-6 col-md-6">
+                                                <label for="db_external_device_name" class="form-label">Selected T&A System Database</label>
+                                                    <select class="form-control" data-choices data-choices-search-false
+                                                            name="db_external_device_name" id="db_external_device_name" disabled>
+                                                            {% for database in databases %}
+                                                                <option value="{{ database }}" {% if db_external.NAME == database %} selected {% endif %}>{{ database }}</option>
+                                                            {% endfor %}
+                                                    </select>
+                                                </label>
+                                            </div>
+
+                                            <div class="mt-3 col-xxl-6 col-md-6">
+                                                <label for="db_name" class="form-label">Current Application Database Name</label>
+                                                <input type="text" class="form-control" id="db_name" name="db_name" value="{{ db_blueera.NAME|default:"" }}" disabled>
+                                            </div>
+
+                                            <div class="mt-3 col-xxl-6 col-md-6">
+                                                <label for="db_user" class="form-label">Username</label>
+                                                <input type="text" class="form-control" id="db_user" name="db_username" value="{{ db_blueera.USER|default:"" }}" disabled>
+                                            </div>
+
+                                            <div class="mt-3 col-xxl-6 col-md-6">
+                                                <label for="db_password" class="form-label">Password</label>
+                                                <input type="text" class="form-control" id="db_password" name="db_password" value="{{ db_blueera.PASSWORD|default:"" }}" disabled>
+                                            </div>
+                                            
+
+                                            <div class="col-sm-auto mt-4">
+                                                <div class="gap-1 flex-wrap" style="display: none;">
+                                                    <button type="submit" class="btn btn-success add-btn" data-bs-toggle="modal" id="db_submit_btn" data-bs-target="#showModal"><i class="ri-save-line align-bottom me-1"></i> Submit</button>
+                                                    <a type="button" href="{% url 'apps.main.settings:database-settings-test' %}" class="btn btn-success add-btn" style="margin-left:15px;" id="check_config_btn" ><i class="ri-check-double-line align-bottom me-1"></i> Check Connection</a>
+                                                </div>
+                                                <div class="mt-3">
+                                                    <span class="submit_db_form_status"></span>
+                                                </div>
+                                            </div>
+
+                         
+                                        </form>
+
+                                    </div>
+
+                                </div>
+        
+                            </div>
+                            <!--end col-->
+                        </div>
+                        <!--end row-->            
+                        
+                    
+                    </div>
+                    <!-- container-fluid -->
+                </div>
+                <!-- End Page-content -->
+
+            {% block footer %}
+            {% include "partials/footer.html" %}
+            {% endblock footer %}
+            </div>
+            <!-- end main content-->
+{% endblock content %}
+
+{% block extra_js %}
+<script>
+    $(document).ready(function () {
+        function toggleDbDriverField() {
+          var dbDriverField = $('#db_driver');
+          var selectedValue = $('input[name="db_type"]:checked').val();
+          if (selectedValue === "mssql") {
+            dbDriverField.prop('disabled', false);
+            $('.db_driver_parent').show();
+
+          } else {
+            dbDriverField.prop('disabled', true);
+            $('.db_driver_parent').hide();
+          }
+        }
+      
+        // Attach a change event handler to the radio inputs with name "db_type"
+        $('input[name="db_type"]').change(function () {
+          toggleDbDriverField();
+        });
+      
+        // Check the initial value and hide the "db_driver_parent" field if needed
+        toggleDbDriverField();
+      });
+</script>
+{% endblock extra_js %}

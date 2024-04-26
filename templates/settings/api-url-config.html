@@ -1,0 +1,153 @@
+{% extends "partials/base.html" %}
+{% load static %}
+{% block title %}API Url Config Settings{% endblock title %}
+{% block extra_css %}
+{% endblock extra_css %}
+{% block content %}
+            <!-- ============================================================== -->
+            <!-- Start right Content here -->
+            <!-- ============================================================== -->
+            <div class="main-content">
+
+                <div class="page-content">
+                    <div class="container-fluid">
+
+                        {% block pagetitle %}
+                        {% include "partials/page-title.html" with pagetitle="Settings" title="API Url Config Settings" %}
+                        {% endblock pagetitle %}
+
+                        {% block alerts %}
+                            {% include "partials/errors.html" with messages=messages %}
+                        {% endblock alerts %}
+    
+                        <div class="row">
+                            <div class="col-xl-9">
+
+                                <div class="card" id="database_card">
+                                    <div class="card-header border-1">
+                                        <div class="row align-items-center gy-3">
+                                            <div class="col-sm">
+                                                <h5 class="card-title mb-0">API Url Config Settings</h5>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="card-body pt-3">
+                                        <form method="post" id="database_configuration_form" action="{% url 'apps.main.settings:settings-api-url-config-submit' %}">
+                                            {% csrf_token %}
+
+                                            <div class="mt-3 row">
+                                                <div class="col-6">
+                                                    <label for="bio_star_url" class="form-label">Host</label>
+                                                    <input type="text" class="form-control" name="bio_star_url" id="bio_star_url" value="{{ configData.bio_star_url|default:"" }}">
+                                                </div>
+
+                                                <div class="col-6">
+                                                    <label for="bio_star_url_default_path" class="form-label">API Path</label>
+                                                    <input type="text" class="form-control" name="bio_star_url_default_path" id="bio_star_url_default_path" placeholder="api" value="{{ configData.bio_star_url_default_path|default:"" }}">
+                                                </div>
+                                            </div>
+        
+                                            <div class="mt-4 row">
+                                                <div class="col-6">
+                                                    <label for="bio_star_username" class="form-label">Username</label>
+                                                    <input type="text" class="form-control" id="bio_star_username" name="bio_star_username" value="{{ configData.bio_star_username|default:"" }}">
+                                                </div>
+        
+                                                <div class="col-6">
+                                                    <label for="bio_star_password" class="form-label">Password</label>
+                                                    <input type="password" class="form-control" id="bio_star_password" name="bio_star_password" value="{{ configData.bio_star_password|default:"" }}">
+                                                </div>
+                                            </div>
+        
+                                            <div class="col-sm-auto mt-4 mb-4">
+                                                <div class="gap-1 flex-wrap">
+                                                    <button type="submit" class="btn btn-success add-btn" data-bs-toggle="modal" id="db_submit_btn" data-bs-target="#showModal"><i class="ri-save-line align-bottom me-1"></i> Submit</button>
+                                                </div>
+                                            </div>
+
+                         
+                                        </form>
+
+                                    </div>
+
+                                </div>
+        
+                            </div>
+                            <!--end col-->
+                        </div>
+                        <!--end row-->            
+                        
+
+
+
+
+                        <div class="row">
+                            <div class="col-xl-9">
+
+                                <div class="card" id="database_card">
+                                    <div class="card-header border-1">
+                                        <div class="row align-items-center gy-3">
+                                            <div class="col-sm">
+                                                <h5 class="card-title mb-0">BioStar T&A Settings</h5>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="card-body pt-3">
+                                        <form method="post" id="database_configuration_form" action="{% url 'apps.main.settings:settings-api-url-config-tna-settings-submit' %}">
+                                            {% csrf_token %}
+
+                                            <div class="mt-3 row" style="margin-left: 0; margin-right: 0;">
+                                                <div class="col-xxl-12 col-md-12 form-check form-switch form-switch-success">
+                                                    <input class="form-check-input" type="checkbox" role="switch" id="is_tna_enabled_in_biostart" name="is_tna_enabled_in_biostart" {% if configData.is_tna_enabled_in_biostart == True %}checked{% endif %} readonly disabled>
+                                                    <label class="form-check-label" for="is_tna_enabled_in_biostart">Time&Attendance (T&A) Enabled Status?</label>
+                                                    <span class="text-muted pt-2" style="display: block;">Is T&A module enabled in BioStar? For any further help please <a href="https://blueerasoftech.com">Get in Touch</a></span>
+                                                </div>
+                                            </div>
+
+                                            <div class="mt-4 row">
+                                                <div class="col-6">
+                                                    <label for="tna_biostar_port" class="form-label">T&A Port</label>
+                                                    <input type="text" class="form-control" id="tna_biostar_port" name="tna_biostar_port" readonly disabled value="{{ configData.tna_biostar_port|default:"" }}">
+                                                </div>
+                                            </div>
+        
+                                            <div class="col-sm-auto mt-4 mb-4">
+                                                <div class="gap-1 flex-wrap">
+                                                    <button type="submit" class="btn btn-success add-btn" data-bs-toggle="modal" id="db_submit_btn" data-bs-target="#showModal"><i class="ri-refresh-line align-bottom me-1"></i> Refresh</button>
+                                                </div>
+                                            </div>
+
+                         
+                                        </form>
+
+                                    </div>
+
+                                </div>
+        
+                            </div>
+                            <!--end col-->
+                        </div>
+                        <!--end row-->     
+
+
+
+
+
+                    
+                    </div>
+                    <!-- container-fluid -->
+                </div>
+                <!-- End Page-content -->
+
+            {% block footer %}
+            {% include "partials/footer.html" %}
+            {% endblock footer %}
+            </div>
+            <!-- end main content-->
+{% endblock content %}
+
+{% block extra_js %}
+<script>
+    
+</script>
+{% endblock extra_js %}

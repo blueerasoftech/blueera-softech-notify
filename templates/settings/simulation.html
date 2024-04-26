@@ -1,0 +1,230 @@
+{% extends "partials/base.html" %}
+{% load static %}
+{% block title %}Simulation{% endblock title %}
+{% block extra_css %}
+<!--datatable css-->
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+
+
+{% endblock extra_css %}
+{% block content %}
+            <!-- ============================================================== -->
+            <!-- Start right Content here -->
+            <!-- ============================================================== -->
+            <div class="main-content">
+
+                <div class="page-content">
+                    <div class="container-fluid">
+
+                        {% block pagetitle %}
+                        {% include "partials/page-title.html" with pagetitle="Settings" title="Simulation" %}
+                        {% endblock pagetitle %}
+
+                        {% block alerts %}
+                            {% include "partials/errors.html" with messages=messages %}
+                        {% endblock alerts %}
+    
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <div class="card" id="recordList">
+                                    <div class="card-header border-0">
+                                        <div class="row align-items-center gy-3">
+                                            <div class="col-sm">
+                                                <h5 class="card-title mb-3">Send WhatsApp Alert Test Message to User</h5>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="card-body border border-dashed border-end-0 border-start-0">
+                                        <form>
+                                            <div class="row g-3">
+                                                <div class="col-xxl-5 col-sm-6">
+                                                    <div class="search-box">
+                                                        <input type="text" class="form-control search"
+                                                            placeholder="Search for User Id, Name, Email etc...">
+                                                        <i class="ri-search-line search-icon"></i>
+                                                    </div>
+                                                </div>
+                                                
+                                            </div>
+                                            <!--end row-->
+                                        </form>
+                                    </div>
+                                    <div class="card-body pt-0">
+                                        <div class="mt-3">
+                                            <div class="table-responsive table-card mb-1">
+                                                <table class="table table-nowrap align-middle bes-datatable" id="simulationTable">
+                                                    <thead class="text-muted table-light">
+                                                        <tr class="text-uppercase text-center">
+                                                            <th class="text-center">Sr No</th>
+                                                            <th class="text-center">User Id</th>
+                                                            <th class="">Name</th>
+                                                            <th class="">Designation</th>
+                                                            <th class="">Department</th>
+                                                            <th class="">Branch</th>
+                                                            <th class="">Email</th>
+                                                            <th class="">Phone</th>
+                                                            <th class="text-center">View</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody class="list form-check-all">
+                                                       
+                                                    </tbody>
+                                                </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+            
+                            </div>
+                            <!--end col-->
+                        </div>
+                        <!--end row-->            
+                        
+                    </div>
+                    <!-- container-fluid -->
+                </div>
+                <!-- End Page-content -->
+
+            {% block footer %}
+            {% include "partials/footer.html" %}
+            {% endblock footer %}
+            </div>
+            <!-- end main content-->
+{% endblock content %}
+
+{% block extra_js %}
+<!-- list.js min js -->
+{% comment %} <script src="{% static 'libs/list.js/list.min.js'%}"></script> {% endcomment %}
+
+<!--list pagination js-->
+{% comment %} <script src="{% static 'libs/list.pagination.js/list.pagination.min.js'%}"></script> {% endcomment %}
+
+
+
+<!--datatable js-->
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+<script>
+$(document).ready(function () {
+    var startDate;
+    var endDate;
+
+    $.fn.dataTable.ext.errMode = 'none';
+     var oTable = $('#simulationTable').on( 'error.dt', function ( e, settings, techNote, message ) {
+        console.log( 'An error has been reported by DataTables: ', message );
+        $(".noresultContainer").show();
+    }).dataTable({
+        "processing": true,
+        "serverSide": true,
+        "paging": true,
+        "lengthChange": true,
+        "lengthMenu": [10, 25, 50, 100],
+        "info": true,
+        "ordering": false,
+        "searching": true,
+        "ajax": {
+            url: "{{ ajax_url }}",
+            type: "POST",
+            beforeSend: function () {
+                $('#spinner-div').show();
+            },
+            complete: function () {
+                $('#spinner-div').hide();
+            },
+            async: false,    //This line is very important to make expose value of statusArray Globally
+            data: function (d) {
+                // Add the date range parameters to the Ajax request
+                d.start_date = startDate;
+                d.end_date = endDate;
+            }, 
+            dataSrc: "data",
+        },
+        "drawCallback": function (data) {
+            //console.log(data);
+           //If data is not availble then it will show noresult image
+           if (data.oAjaxData.length <= 0){
+                $(".noresultContainer").show();
+            }
+        },
+        "rowCallback": function (nRow, aData, iDisplayIndex) {
+            var oSettings = this.fnSettings ();
+            $("td:first", nRow).html(oSettings._iDisplayStart+iDisplayIndex +1);
+            return nRow;
+        },
+        "columns": [
+                    { "data" : "user_id",
+                        createdCell: function (td, cellData, rowData, row, col) {
+                            $(td).css('text-align', 'center');
+                        }
+                    },//This is just fake entry to avoid error of AJAX, SR numbers are loaded with iDislayIndex configured above
+                    { "data" : "user_id",
+                        createdCell: function (td, cellData, rowData, row, col) {
+                            $(td).css('text-align', 'center');}
+                    },
+                    { "data": "name" },
+                    { "data": "designation_name" },
+                    { "data": "department_name" },
+                    { "data": "branch_name" },
+                    { 
+                        "data": "email",
+                        "render": function(data, type, row) {
+                            return data ? data : '-';
+                        } 
+                    },
+                    { 
+                        "data": "phone",
+                        "render": function(data, type, row) {
+                            return data ? data : '-';
+                        }
+                    },
+                    {
+                        "data": "simulation_detail_url",
+                        "render": function (data, type, row) {
+                          // Apply the formatDate function to format the date value
+                          return (`<button onclick="window.location.href = '${data}';" type="button" class="btn btn-success btn-label waves-effect waves-light">
+                            <i class="ri-mail-send-line fs-16 label-icon align-middle me-2"></i> 
+                            Test Message
+                        </button>`);
+                        },
+                        createdCell: function (td, cellData, rowData, row, col) {
+                            $(td).css('text-align', 'center');
+                        }
+                    }
+                ],
+                "dom": '<"top">rt<"bottom"lpi><"clear">'
+                //t = table, l = length, i = information, p = pagination
+
+    });
+
+    
+
+    $("#searchBox").on('keyup', function (){
+        oTable.fnFilter(this.value);
+    });
+
+    function getUserStatus(user_status) {
+        if (user_status === 'false') {
+        return '<span class="badge badge-soft-danger text-uppercase">In-Active</span>';
+        } else  {
+        return '<span class="badge badge-soft-success text-uppercase">Active</span>';
+        }
+    }
+
+
+        $("#users-datepicker").flatpickr({
+            mode: 'range',
+            defaultDate: ["today", "today"]
+        });
+
+        // Apply Select2 to the child select element
+        var tableLengthDropdown = document.querySelector('.dataTables_length select');
+        new Choices(tableLengthDropdown,{ searchEnabled: false });
+}); 
+
+          
+</script>
+
+
+{% endblock extra_js %}
+
+

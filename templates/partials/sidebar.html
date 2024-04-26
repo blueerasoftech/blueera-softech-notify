@@ -1,0 +1,181 @@
+{% load static %}
+{% block sidebar %}
+        <!-- ========== App Menu ========== -->
+        <div class="app-menu navbar-menu" style="padding-left: 5px">
+            <!-- LOGO -->
+            <div class="navbar-brand-box" style="margin-top: 20px; text-align: left; margin-bottom: 10px;">
+                <!-- Dark Logo-->
+                <a href="{% url 'apps.main.dashboards:dashboard'%}" class="logo logo-dark">
+                    <span class="logo-sm">
+                        <img src="{% static 'images/logo-sm.png'%}" alt="" height="15">
+                    </span>
+                    <span class="logo-lg">
+                        <img src="{% static 'images/logo-dark.png'%}" alt="" height="23">
+                    </span>
+                </a>
+                <!-- Light Logo-->
+                <a href="{% url 'apps.main.dashboards:dashboard'%}" class="logo logo-light">
+                    <span class="logo-sm">
+                        <img src="{% static 'images/logo-sm.png'%}" alt="" height="15">
+                    </span>
+                    <span class="logo-lg">
+                        <img src="{% static 'images/logo-light.png'%}" alt="" height="23">
+                    </span>
+                </a>
+                <button type="button" class="btn btn-sm p-0 fs-20 header-item float-end btn-vertical-sm-hover" id="vertical-hover">
+                    <i class="ri-record-circle-line"></i>
+                </button>
+            </div>
+
+            <div id="scrollbar">
+                <div class="container-fluid">
+                    
+                    <div id="two-column-menu">
+                    </div>
+                    <ul class="navbar-nav" id="navbar-nav">
+                        <li class="menu-title"><span data-key="t-menu">Menu</span></li>
+                        <li class="nav-item">
+                            <a class="nav-link menu-link" href="{% url 'apps.main.dashboards:dashboard' %}" >
+                                <i class="ri-dashboard-2-line"></i> <span data-key="t-dashboards">Dashboards</span>
+                            </a>
+                        </li> <!-- end Dashboard Menu -->
+
+                        <li class="nav-item">
+                            <a class="nav-link menu-link" href="{% url 'apps.main.records:records-list' %}" >
+                                <i class="ri-pages-line"></i> <span data-key="t-records">Records</span>
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link menu-link" href="{% url 'apps.main.bio_star_system_status:bio-star-system-status-list' %}" >
+                                <i class="ri-pages-line"></i> <span data-key="t-bio_star_system_status">BioStar System Status</span>
+                            </a>
+                        </li>
+
+
+                        <li class="nav-item">
+                            <a class="nav-link menu-link" href="{% url 'apps.main.settings:alerts' %}" >
+                                <i class="ri-notification-4-line"></i> <span data-key="t-alerts">T&A Alerts</span>
+                            </a>
+                        </li>
+
+
+                        <li class="nav-item">
+                            <a class="nav-link menu-link" href="{% url 'apps.main.general_alerts:general-alerts-list' %}" >
+                                <i class="ri-broadcast-line"></i> <span data-key="general-alerts">General Alerts</span>
+                            </a>
+                        </li>
+
+
+                        <li class="nav-item">
+                            <a class="nav-link menu-link" href="{% url 'apps.main.users:users-list' %}" >
+                                <i class="ri-team-line"></i> <span data-key="t-users">Users</span>
+                            </a>
+                        </li>
+
+
+
+                        <li class="menu-title"><span data-key="t-settings">Settings</span></li>
+                        <li class="nav-item">
+                            <a class="nav-link menu-link" href="#sidebarSettings" data-bs-toggle="collapse" role="button"
+                                aria-expanded="false" aria-controls="sidebarSettings">
+                                <i class="ri-settings-4-line"></i> <span data-key="t-settings">Settings</span>
+                            </a>
+                            <div class="collapse menu-dropdown" id="sidebarSettings">
+                                <ul class="nav nav-sm flex-column">
+                                    <li class="nav-item">
+                                        <a href="{% url 'apps.main.settings:general-settings' %}" class="nav-link" data-key="t-general_settings">General Settings</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="{% url 'apps.main.settings:settings-api-url-config' %}" class="nav-link" data-key="t-api-url-config">BioStar Config</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="{% url 'apps.main.settings:company-profile' %}" class="nav-link" data-key="t-company-profile">Company Profile</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="{% url 'apps.main.settings:whatsapp-settings' %}" class="nav-link" data-key="t-whatsapp_settings">WhatsApp Config
+                                            {% if configData and configData is not None %}
+                                                {% if configData.is_whatsapp_completed == False %}
+                                                    <span class="badge badge-pill bg-danger" >REQ</span>
+                                                {% elif configData.is_whatsapp_connection_verified == False %}
+                                                    <span class="badge badge-pill bg-danger" >REQ</span>
+                                                {% endif %}
+                                            {% endif %}
+                                        </a>
+                                    </li>
+
+                                    <li class="nav-item">
+                                        <a href="{% url 'apps.main.settings:whatsapp-numbers-settings' %}" class="nav-link" data-key="t-whatsapp_numbers_settings">WhatsApp Numbers</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="{% url 'apps.main.settings:database-settings' %}" class="nav-link" data-key="t-database_settings">Database</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="{% url 'apps.main.settings:email-settings' %}" class="nav-link" data-key="t-email_settings">Email</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="{% url 'apps.main.settings:license-settings' %}" class="nav-link" data-key="t-license_settings">License</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </li> <!-- end Dashboard Menu -->
+
+
+
+
+
+
+                        <li class="menu-title"><span data-key="t-config">Config Data</span></li>
+                            <li class="nav-item">
+                                <a class="nav-link menu-link" href="#sidebarConfig" data-bs-toggle="collapse" role="button"
+                                    aria-expanded="false" aria-controls="sidebarConfig">
+                                    <i class="ri-tools-fill"></i> <span data-key="t-config">Config Data</span>
+                                </a>
+                                <div class="collapse menu-dropdown" id="sidebarConfig">
+                                    <ul class="nav nav-sm flex-column">
+                                        <li class="nav-item">
+                                            <a href="{% url 'apps.main.settings:whatsapp-templates' %}" class="nav-link" data-key="t-whatsapp-templates">Whatsapp Templates</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a href="{% url 'apps.main.settings:devices' %}" class="nav-link" data-key="t-devices">Devices</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a href="{% url 'apps.main.settings:user-groups' %}" class="nav-link" data-key="t-user-groups">User Groups</a>
+                                        </li>
+                                        {% if configData.is_tna_enabled_in_biostart == True %}
+                                            <li class="nav-item">
+                                                <a href="{% url 'apps.main.settings:shifts' %}" class="nav-link" data-key="t-shifts">Shifts</a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a href="{% url 'apps.main.settings:event-types' %}" class="nav-link" data-key="t-event-types">Event Types</a>
+                                            </li>
+                                        {% endif %}
+                                        <li class="nav-item">
+                                            <a href="{% url 'apps.main.settings:cron-updates-list' %}" class="nav-link" data-key="t-cron-updates-list">Cron Updates List</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </li> <!-- end Dashboard Menu -->
+
+                            <li class="menu-title"><span data-key="t-simulation">Simulation</span></li>
+                            <li class="nav-item">
+                                <a class="nav-link menu-link" href="{% url 'apps.main.settings:simulation' %}" >
+                                    <i class="ri-bug-2-line"></i> <span data-key="t-simulation">Simulation</span>
+                                </a>
+                            </li>
+                    </ul>
+                    <div class="mt-5">
+                    </div>
+
+                </div>
+                
+                <!-- Sidebar -->                
+            </div>
+            
+            <div class="sidebar-background"></div>
+        </div>
+        <!-- Left Sidebar End -->
+        <!-- Vertical Overlay-->
+        <div class="vertical-overlay"></div>
+{% endblock sidebar %}
+    

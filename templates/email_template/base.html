@@ -1,0 +1,80 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en" {% block html %}data-layout="vertical" data-topbar="light" data-sidebar="dark" data-sidebar-size="lg" data-sidebar-image="none" data-preloader="disable" {% endblock html %}>
+<head>
+    <meta charset="utf-8" />
+    <title>{% block title %}{% endblock title %} | WhatsApp System - BlueEra Softech</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta content="WhatsApp System - BlueEra Softech" name="description" />
+    <meta content="BlueEra Softech" name="author" />
+    <!-- App favicon -->
+    <link rel="shortcut icon" href="{% static 'images/favicon.ico'%}">
+
+    {% block css %}
+    {% block extra_css %}
+    {% endblock extra_css %}
+
+    <!-- Layout config Js -->
+    <script src="{% static 'js/layout.js'%}"></script>
+    <!-- Bootstrap Css -->
+    <link href="{% static 'css/bootstrap.min.css'%}" id="bootstrap-style" rel="stylesheet" type="text/css" />
+    <!-- Icons Css -->
+    <link href="{% static 'css/icons.min.css'%}" rel="stylesheet" type="text/css" />
+    <!-- App Css-->
+    <link href="{% static 'css/app.min.css'%}" id="app-style" rel="stylesheet" type="text/css" />
+    <!-- custom Css-->
+    <link href="{% static 'css/custom.min.css'%}" id="app-style" rel="stylesheet" type="text/css" />
+    <link href="{% static 'css/bes-custom.css'%}" id="app-style" rel="stylesheet" type="text/css" />
+    {% endblock css %}
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-ZKRPV9NM8F"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'G-ZKRPV9NM8F');
+    </script>
+    <style>
+        @media (min-width: 768px) {
+            .main-content {
+                margin-left: 0 !important;
+            }
+        }
+        .dark-color {
+            color: #495057;
+        }
+        .gray-color {
+            color: #878a99;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Begin page -->
+    <div id="layout-wrapper">
+    
+        {% block content %}
+        {% endblock content %}
+
+    </div>
+    
+    {% block javascript %}
+    <!-- JAVASCRIPT -->
+    <script src="{% static 'libs/bootstrap/js/bootstrap.bundle.min.js'%}"></script>
+    <script src="{% static 'libs/simplebar/simplebar.min.js'%}"></script>
+    <script src="{% static 'libs/node-waves/waves.min.js'%}"></script>
+    <script src="{% static 'libs/feather-icons/feather.min.js'%}"></script>
+    <script src="{% static 'js/pages/plugins/lord-icon-2.1.0.js'%}"></script>
+    <script src="{% static 'js/plugins.js'%}"></script>
+
+    {% block extra_js %}
+    {% endblock extra_js %}
+
+    <!-- App js -->
+    <script src="{% static 'js/app.js'%}"></script>
+    {% endblock javascript %}
+
+</body>
+
+</html>

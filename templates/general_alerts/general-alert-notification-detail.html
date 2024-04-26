@@ -1,0 +1,218 @@
+{% extends "partials/base.html" %}
+{% load static %}
+{% block title %}Notification Detail{% endblock title %}
+{% block extra_css %}
+{% endblock extra_css %}
+{% block content %}
+            <!-- ============================================================== -->
+            <!-- Start right Content here -->
+            <!-- ============================================================== -->
+            <div class="main-content">
+
+                <div class="page-content">
+                    <div class="container-fluid">
+
+                        {% block pagetitle %}
+                        {% include "partials/page-title.html" with pagetitle="General Alerts" title="Notification Detail" %}
+                        {% endblock pagetitle %}
+
+                        {% block alerts %}
+                            {% include "partials/errors.html" with messages=messages %}
+                        {% endblock alerts %}
+    
+                        <div class="row">
+                            <div class="col-lg-9">
+                                <div class="card" id="orderList">
+                                    <div class="card-header border-0 mt-2 pb-0">
+                                        <div class="row align-items-center gy-3">
+                                            <div class="col-sm-auto">
+                                                <h5>Notification Detail :</h5>
+                                            </div>
+                                            <div class="col-sm-9">
+                                                <div>
+                                                    <h5>{{ ga_notification.whatsapp_template.name }}</h5>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="card-body">
+
+                                        <div class="border p-4 pt-3">
+                                            <div class="">
+                                                <div class="table-responsive">
+                                                    <table class="table mb-0">
+                                                        <tbody>
+                                                            <tr>
+                                                                <th scope="row" style="width: 200px;">ID</th>
+                                                                <td>{{ ga_notification.id }}</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <th scope="row">General Alert ID</th>
+                                                                <td>{{ ga_notification.ga_alert.id }}</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <th scope="row">Name</th>
+                                                                <td>{{ ga_notification.ga_alert_name }}</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <th scope="row">Alert Type</th>
+                                                                <td>{{ ga_notification.ga_alert.alerts_type }}</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <th scope="row">WhatsApp Template</th>
+                                                                <td>{{ ga_notification.whatsapp_template.name }}</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <th scope="row">Mobile</th>
+                                                                <td>{{ ga_notification.mobile }}</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <th scope="row">WhatsApp Message ID</th>
+                                                                <td>{{ ga_notification.whatsapp_msg_id|default:'-' }}</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <th scope="row">Time</th>
+                                                                <td>{{ ga_notification.created_at|date:"d M Y, h:i A" }}</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <th scope="row">Delivery Status</th>
+                                                                <td id="statusCell"></td>
+                                                            </tr>
+                                                            <tr>
+                                                                <th scope="row">Trigger Time</th>
+                                                                <td>{{ ga_notification.cron_date_time|date:"d M Y, h:i A" }}</td>
+                                                            </tr>
+
+                                                            <tr>
+                                                                <th scope="row">Message</th>
+                                                                <td>{{ ga_notification.message_text|default:"N/A"|safe }}</td>
+                                                            </tr>
+                                            
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>  
+                                        </div>
+                                    </div>
+                                </div>
+            
+                            </div>
+                            <!--end col-->
+                        </div>
+                        <!--end row-->
+                    </div>
+                    <!-- container-fluid -->
+
+                    
+                    {% if ga_notification_status and ga_notification_status|length > 0 %}
+                    
+                        <div class="container-fluid">
+                            <div class="row mt-3 mb-3">
+                                <div class="col-lg-9">
+                                    <div class="card" id="orderList">
+                                        <div class="card-header border-1">
+                                            <div class="row align-items-center gy-3">
+                                                <div class="col-sm">
+                                                    <h5 class="card-title mb-0">Message Status</h5>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                            <div class="card-body mt-0">
+                                                <div>
+                                                    <div class="table-responsive table-card mb-1">
+                                                        <table class="table table-nowrap align-middle bes-datatable" id="whatsappTemplatesTable">
+                                                            <thead class="text-muted table-light">
+                                                                <tr class="text-uppercase">
+                                                                    <th class="text-center">SR</th>
+                                                                    <th class="text-center">Status</th>
+                                                                    <th class="text-center">Timestamp</th>
+                                                                    <th class="text-center">Is Error</th>
+                                                                    <th class="text-center">Error Code</th>
+                                                                    <th class="text-center">Error</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody class="list form-check-all">
+                                                                {% for ga_status in ga_notification_status %}
+                                                                    <tr>
+                                                                        <td class="text-center">{{ forloop.counter }}</td>
+                                                                        <td class="text-center">
+                                                                            {% if ga_status.status == 'pending' %}
+                                                                                <span class="badge badge-soft-warning text-uppercase">Pending</span>
+                                                                            {% elif ga_status.status == 'send' %}
+                                                                                <span class="badge badge-soft-secondary text-uppercase">Send</span>
+                                                                            {% elif ga_status.status == 'system_send' %}
+                                                                                <span class="badge badge-soft-secondary text-uppercase">Send</span>
+                                                                            {% elif ga_status.status == 'failed' %}
+                                                                                <span class="badge badge-soft-danger text-uppercase">Failed</span>
+                                                                            {% elif ga_status.status == 'delivered' %}
+                                                                                <span class="badge badge-soft-info text-uppercase">Delivered</span>
+                                                                            {% elif ga_status.status == 'read' %}
+                                                                                <span class="badge badge-soft-success text-uppercase">Read</span>
+                                                                            {% else %}
+                                                                                <span class="badge badge-soft-warning text-uppercase">Send</span>
+                                                                            {% endif %}
+                                                                        </td>
+                                                                        <td class="text-center">{{ ga_status.timestamp|date:"d M Y, h:i A" }}</td>
+                                                                        <td class="text-center">{{ ga_status.is_error }}</td>
+                                                                        <td class="text-center">{{ ga_status.error_code|default:"-" }}</td>
+                                                                        <td class="text-center">{{ ga_status.error|default:"-" }}</td>
+                                                                    </tr>
+                                                                {% endfor %}
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                    </div>
+                                </div>
+                                <!--end col-->
+                            </div>
+                            <!--end row--> 
+                        </div>
+                        {% endif %}
+
+                    
+                </div>
+                <!-- End Page-content -->
+
+            {% block footer %}
+            {% include "partials/footer.html" %}
+            {% endblock footer %}
+            </div>
+            <!-- end main content-->
+{% endblock content %}
+
+
+{% block extra_js %}
+
+<script>
+
+    var deliveryStatus = "{{ ga_notification.whatsapp_msg_status }}";
+    console.log(deliveryStatus);
+
+    function getDeliveryStatusBadge(deliveryStatus) {
+        if (deliveryStatus === 'pending') {
+            return '<span style="font-size:12px;" class="badge badge-soft-warning text-uppercase">Pending</span>';
+        } else if (deliveryStatus === 'send') {
+            return '<span style="font-size:12px;" class="badge badge-soft-secondary text-uppercase">Send</span>';
+        } else if (deliveryStatus === 'system_send') {
+            return '<span style="font-size:12px;" class="badge badge-soft-secondary text-uppercase">Send</span>';
+        } else if (deliveryStatus === 'failed') {
+            return '<span style="font-size:12px;" class="badge badge-soft-danger text-uppercase">Failed</span>';
+        } else if (deliveryStatus === 'delivered') {
+            return '<span style="font-size:12px;" class="badge badge-soft-info text-uppercase">Delivered</span>';
+        } else if (deliveryStatus === 'read') {
+            return '<span style="font-size:12px;" class="badge badge-soft-success text-uppercase">Read</span>';
+        } else {
+            return '<span style="font-size:12px;" class="badge badge-soft-warning text-uppercase">Pending</span>';
+        }
+    }
+
+    const statusCell = document.getElementById('statusCell');
+    const badgeHTML = getDeliveryStatusBadge(deliveryStatus);
+    statusCell.innerHTML = badgeHTML;
+</script>
+
+{% endblock extra_js %}

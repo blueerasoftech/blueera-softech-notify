@@ -1,0 +1,140 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en" {% block html %}data-layout="vertical" data-topbar="light" data-sidebar="dark" data-sidebar-size="lg" data-sidebar-image="none" data-preloader="disable" data-layout-mode="light"{% endblock html %}>
+<head>
+    <meta charset="utf-8" />
+    <title>{% block title %}{% endblock title %} | BlueEra Softech Notify</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta content="Optimize your workforce management with our WhatsApp Utility Application for Time & Attendance across a range of devices. Streamline attendance tracking effortlessly, leveraging the power of WhatsApp. Simplify timekeeping, enhance accuracy, and boost efficiency. Explore a versatile solution that seamlessly integrates with diverse Time & Attendance devices, ensuring accurate record-keeping and real-time insights. Elevate your business productivity with hassle-free attendance management through WhatsApp." name="description" />
+    <meta content="BlueEra Softech Notify" name="author" />
+    <meta property="og:image" content="https://whatsapputility.blueerasoftech.com/media/blueera-seo-1.jpg">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:type" content="image/jpeg">
+    <!-- App favicon -->
+    <link rel="shortcut icon" href="{% static 'images/favicon.ico'%}">
+    <style>
+        #spinner-div {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            text-align: center;
+            background-color: rgba(255, 255, 255, 0.5);
+            z-index: 99999;
+            display: flex;
+          }
+    </style>
+    {% block css %}
+    {% block extra_css %}
+    
+
+    {% endblock extra_css %}
+
+
+    <!-- Jquery CDN -->
+    <script src="{% static 'js/jquery.js'%}"></script>
+    <!-- Layout config Js -->
+    <script src="{% static 'js/layout.js'%}"></script>
+    <!-- Bootstrap Css -->
+    <link href="{% static 'css/bootstrap.min.css'%}" id="bootstrap-style" rel="stylesheet" type="text/css" />
+    <!-- Icons Css -->
+    <link href="{% static 'css/icons.min.css'%}" rel="stylesheet" type="text/css" />
+    <!-- App Css-->
+    <link href="{% static 'css/app.min.css'%}" id="app-style" rel="stylesheet" type="text/css" />
+    <!-- custom Css-->
+    <link href="{% static 'css/custom.min.css'%}" id="app-style" rel="stylesheet" type="text/css" />
+    <link href="{% static 'css/bes-custom.css'%}" id="app-style" rel="stylesheet" type="text/css" />
+     <!-- Flatpickr Css-->
+     <!-- <link href="{% static 'libs/flatpickr/flatpickr.min.css'%}" id="app-style" rel="stylesheet" type="text/css" /> -->
+    {% endblock css %}
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-ZKRPV9NM8F"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'G-ZKRPV9NM8F');
+    </script>
+</head>
+
+<body>
+    <div id="spinner-div" class="pt-5" style="display: none;">
+        <div class="spinner-border text-primary m-auto" role="status">
+        </div>
+    </div>
+    <!-- Begin page -->
+    <div id="layout-wrapper">
+        {% block header %}
+        {% include "partials/topbar.html" %}
+        {% endblock header %}
+        {% block sidebar %}
+        {% include "partials/sidebar.html" %}
+        {% endblock sidebar %}
+        {% block content %}
+        {% block pagetitle %}
+        {% endblock pagetitle %}
+        {% block alerts %}
+        {% endblock alerts %}
+        {% block footer %}
+        {% endblock footer %}
+        {% endblock content %}
+    </div>
+    
+    {% block extra_content %}        
+    {% endblock extra_content %}
+        
+    <!-- END layout-wrapper -->
+
+    {% block javascript %}
+    <!-- JAVASCRIPT -->
+    <script src="{% static 'libs/bootstrap/js/bootstrap.bundle.min.js'%}"></script>
+    <script src="{% static 'libs/simplebar/simplebar.min.js'%}"></script>
+    <script src="{% static 'libs/node-waves/waves.min.js'%}"></script>
+    <script src="{% static 'libs/feather-icons/feather.min.js'%}"></script>
+    <script src="{% static 'js/pages/plugins/lord-icon-2.1.0.js'%}"></script>
+    <script src="{% static 'js/plugins.js'%}"></script>
+    <script src="{% static 'libs/flatpickr/flatpickr.min.js'%}"></script>
+    <script src="{% static 'js/bootstrap.min.js'%}"></script>
+
+    {% block extra_js %}
+    {% endblock extra_js %}
+
+    <!-- App js -->
+    <script src="{% static 'js/app.js'%}"></script>
+
+
+    <script>
+        $(function(){
+            var deleteBox = '<span class="deleteBox"><p>Are you sure you want to delete all crons?</p><span class="cancel btn-light">Cancel</span><span class="confirm">Yes</span></span>';
+            $('.delete-confirmation').each(function(){
+                $(this).append(deleteBox);
+            }).click(function(){
+                if(!$(this).hasClass('selected')){
+                    $(this).addClass('selected');
+                    var owner = $(this);
+                    var confirmUrl = window.location.origin + owner.data("url");
+    
+                    $(this).find('.cancel').unbind('click').bind('click',function(){
+                        owner.removeClass('selected');
+                        return false;
+                    })
+                    
+                    $(this).find('.confirm').unbind('click').bind('click',function(){
+                        window.location.href = confirmUrl;
+                        return false;
+                    })
+                }		
+                return false;
+            });
+        })
+    </script>
+
+    {% endblock javascript %}
+    
+</body>
+
+</html>

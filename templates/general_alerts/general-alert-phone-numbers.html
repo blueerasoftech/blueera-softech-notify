@@ -1,0 +1,199 @@
+{% extends "partials/base.html" %}
+{% load static %}
+{% block title %}General Alert Phone Numbers{% endblock title %}
+{% block extra_css %}
+<link href="{% static 'select2/select2.css'%}" rel="stylesheet" type="text/css" />
+{% endblock extra_css %}
+{% block content %}
+            <!-- ============================================================== -->
+            <!-- Start right Content here -->
+            <!-- ============================================================== -->
+            <div class="main-content">
+
+                <div class="page-content">
+                    <div class="container-fluid">
+
+                        {% block pagetitle %}
+                        {% include "partials/page-title.html" with pagetitle="General Alerts" title="General Alert Phone Numbers" %}
+                        {% endblock pagetitle %}
+
+                        {% block alerts %}
+                            {% include "partials/errors.html" with messages=messages %}
+                        {% endblock alerts %}
+
+                        <div class="row">
+                            <div class="col-lg-9">
+                                <div class="card" id="orderList">
+                                    <form method="POST" id="alert_type_form" enctype="multipart/form-data" action="{% url 'apps.main.general_alerts:general-alert-phone-numbers' general_alert_id=ga_alert.id %}">
+                                        <div class="card-header border-1">
+                                            <div class="row align-items-center gy-3">
+                                                <div class="col-sm-auto">
+                                                    <h5 class="card-title mb-0">Select Phone Number Fields</h5>
+                                                </div>
+
+                                                
+
+                                                <div class="col-sm-4">
+                                                    <div>
+                                                        {% csrf_token %}
+                                                        <input type="hidden" class="form-control" name="id" id="ga_alert_id" value="{{ ga_alert.id|default:'0' }}" placeholder="">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    
+                                            <div class="card-body">
+                                                
+                                                <div class="row align-items-center gy-3">
+                                                    <div class="col-sm-auto">
+                                                        <h5 class="card-title">Alert Name: </h5>
+                                                    </div>
+                                                    <div class="col-auto">
+                                                        <h5 class="card-title border border-radius p-2">
+                                                            {{ ga_alert.name }} ({{ ga_alert.alerts_type }})
+                                                        </h5>
+                                                    </div>
+                                                </div>
+
+                                                <div class="row align-items-center mt-1 gy-3">
+                                                    <div class="col-sm-auto">
+                                                        <p style="color: #878a99">Select the field which contains mobile number on which whatsapp notification is to be sent. You can select upto 5 fields that means upto 5 numbers for a single user to send the notification.</p>
+                                                    </div>
+                                                </div>
+
+                                            
+                        
+                                                <div class="mt-3 row">
+                                                    <div class="col-xxl-6 col-md-6">
+                                                        <label for="whatsappTemplate" class="form-label">Select Phone Number One Field</label>
+                                                        <select class="form-control" data-choices data-choices-search-true
+                                                                name="phone_one" id="whatsappTemplate">
+                                                                <option value="" {% if ga_alert.phone_one is None %} selected {% endif %}>Select Phone Number Field</option>
+                                                                {% for field in Fields %}
+                                                                    <option value="{{ field }}" {% if ga_alert.phone_one and ga_alert.phone_one == field %} selected {% endif %}>{{ field }}</option>
+                                                                {% endfor %}
+                                                        </select>
+                                                    </div>
+
+                                                    <div class="col-xxl-6 col-md-6">
+                                                        <label for="whatsappTemplate" class="form-label">Select Phone Number Two Field</label>
+                                                        <select class="form-control" data-choices data-choices-search-true
+                                                                name="phone_two" id="whatsappTemplate">
+                                                                <option value="" {% if ga_alert.phone_two is None %} selected {% endif %}>Select Phone Number Field</option>
+                                                                {% for field in Fields %}
+                                                                    <option value="{{ field }}" {% if ga_alert.phone_two and ga_alert.phone_two == field %} selected {% endif %}>{{ field }}</option>
+                                                                {% endfor %}
+                                                        </select>
+                                                    </div>
+                                                </div>
+
+
+                                                <div class="mt-3 row">
+                                                    <div class="col-xxl-6 col-md-6">
+                                                        <label for="whatsappTemplate" class="form-label">Select Phone Number Three Field</label>
+                                                        <select class="form-control" data-choices data-choices-search-true
+                                                                name="phone_three" id="whatsappTemplate">
+                                                                <option value="" {% if ga_alert.phone_three is None %} selected {% endif %}>Select Phone Number Field</option>
+                                                                {% for field in Fields %}
+                                                                    <option value="{{ field }}" {% if ga_alert.phone_three and ga_alert.phone_three == field %} selected {% endif %}>{{ field }}</option>
+                                                                {% endfor %}
+                                                        </select>
+                                                    </div>
+
+                                                    <div class="col-xxl-6 col-md-6">
+                                                        <label for="whatsappTemplate" class="form-label">Select Phone Number Four Field</label>
+                                                        <select class="form-control" data-choices data-choices-search-true
+                                                                name="phone_four" id="whatsappTemplate">
+                                                                <option value="" {% if ga_alert.phone_four is None %} selected {% endif %}>Select Phone Number Field</option>
+                                                                {% for field in Fields %}
+                                                                    <option value="{{ field }}" {% if ga_alert.phone_four and ga_alert.phone_four == field %} selected {% endif %}>{{ field }}</option>
+                                                                {% endfor %}
+                                                        </select>
+                                                    </div>
+                                                </div>
+
+
+
+
+                                                <div class="mt-3 row">
+                                                    <div class="col-xxl-6 col-md-6">
+                                                        <label for="whatsappTemplate" class="form-label">Select Phone Number Five Field</label>
+                                                        <select class="form-control" data-choices data-choices-search-true
+                                                                name="phone_five" id="whatsappTemplate">
+                                                                <option value="" {% if ga_alert.phone_five is None %} selected {% endif %}>Select Phone Number Field</option>
+                                                                {% for field in Fields %}
+                                                                    <option value="{{ field }}" {% if ga_alert.phone_five and ga_alert.phone_five == field %} selected {% endif %}>{{ field }}</option>
+                                                                {% endfor %}
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            
+    
+                                                <div class="col-sm-auto mt-4">
+                                                    <div class="gap-1 flex-wrap">
+                                                        <button type="submit" class="btn btn-success add-btn" id="profile_submit_btn"><i class="ri-save-line align-bottom me-1"></i> Submit</button>
+                                                    </div>
+                                                    <div class="mt-3">
+                                                        <span class="submit_profile_form_status"></span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+            
+                            </div>
+                            <!--end col-->
+                        </div>
+                        <!--end row-->
+                    </div>
+                    <!-- container-fluid -->
+                </div>
+                <!-- End Page-content -->
+
+            {% block footer %}
+            {% include "partials/footer.html" %}
+            {% endblock footer %}
+            </div>
+            <!-- end main content-->
+{% endblock content %}
+
+{% block extra_js %}
+
+<!-- list.js min js -->
+<script src="{% static 'select2/select2.js'%}"></script>
+
+<!-- list.js min js -->
+<!-- <script src="{% static 'libs/list.js/list.min.js'%}"></script> -->
+
+<!--list pagination js-->
+<!-- <script src="{% static 'libs/list.pagination.js/list.pagination.min.js'%}"></script> -->
+
+
+        <script>
+            var alertType = document.getElementById("alertType");
+            var alertTypeChoices = new Choices(alertType, {
+                searchEnabled: false,
+            });
+
+            $("#alertType").change(function() {
+                var selectedAlert = $(this).val();
+                console.log("Selected Alert :: " + selectedAlert);
+                $('#div_cron_date_time').show();
+                if (selectedAlert === "broadcast") {
+                    $('#div_cron_date_time').show();
+                }
+
+            })
+
+
+
+            var whatsappTemplate = document.getElementById("whatsappTemplate");
+            var whatsappTemplateChoices = new Choices(whatsappTemplate, {
+                searchEnabled: true,
+            });
+                       
+        </script>
+        
+
+{% endblock extra_js %}

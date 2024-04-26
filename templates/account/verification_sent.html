@@ -1,0 +1,28 @@
+{% extends "account/base.html" %}
+{% load static %}
+{% load i18n %}
+{% load account %}
+{% block title %}{% endblock %}
+{% block content %}
+                        <div class="card mt-4 custom-card">
+                            <div class="card-body p-4">
+                                <div class="avatar-lg mx-auto mt-2">
+                                    <div class="avatar-title bg-light text-success display-3 rounded-circle">
+                                        <i class="ri-checkbox-circle-fill"></i>
+                                    </div>
+                                </div>
+                                <div class="mt-4">
+                                    <h4>{% trans "Verify Your E-mail Address" %} !</h4>
+                                    {% include "partials/errors.html" with messages=messages %}
+                                    <p class="text-muted mx-4">{% blocktrans %}We have sent an e-mail to you for verification. Follow the link provided to finalize the signup process. Please contact us if you do not receive it within a few minutes.{% endblocktrans %}</p>
+                                    <div class="mt-4">
+                                        <a href="{% url 'apps.main.dashboards:dashboard' %}" class="btn btn-success w-100">Back to Dashboard</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mt-4 text-center">
+                            <p class="mb-0">Back to home ? <a href="{% url 'apps.main.dashboards:dashboard' %}" class="fw-semibold text-primary text-decoration-underline"> Dashboard </a> </p>
+                        </div>
+                            <!-- end card body -->
+{% endblock content %}

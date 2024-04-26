@@ -1,0 +1,602 @@
+{% extends "partials/base.html" %}
+{% load static %}
+{% block title %}WhatsApp Template Parameters{% endblock title %}
+{% block extra_css %}
+<link href="{% static 'select2/select2.css'%}" rel="stylesheet" type="text/css" />
+<style>
+    .variableButton{
+        position:absolute;
+        right: 13px;
+        top: 33px;
+        background: none;
+        border: none;
+    }
+    .variableButton:hover svg path{
+        fill: #3577f1;
+    }
+    .form-control{
+        padding-right: 35px !important;
+    }
+    .select2-dropdown{
+        width: 300px !important;
+        box-shadow: 0 0 20px 0 #ccc !important;
+    }
+    [class^="para_"]{
+        {% comment %} font-weight: bold; {% endcomment %}
+        color: #3577f1;
+    }
+    .alert-msg-preview{
+        font-size: 15px;
+    }
+
+    .avatar-upload.whatsapp-header-upload {
+        max-width: 305px;
+    }
+
+    .avatar-upload .avatar-preview.whatsapp-header-image {
+        width: 300px;
+        height: 200px;
+        position: relative;
+        /* box-shadow: 0px 2px 4px 0px rgb(0 0 0 / 10%); */
+        padding: 1px;
+    }
+
+    .avatar-upload {
+        position: relative;
+        max-width: 205px;
+        /* margin: 20px auto; */
+    }
+    .avatar-upload .avatar-edit {
+        position: absolute;
+        right: -12px;
+        z-index: 1;
+        top: -16px;
+    }
+    .avatar-upload .avatar-edit input {
+        display: none;
+    }
+    .avatar-upload .avatar-edit input + label {
+        display: inline-block;
+        width: 34px;
+        height: 34px;
+        margin-bottom: 0;
+        background: #ffffff;
+        border: 1px solid transparent;
+        box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.12);
+        cursor: pointer;
+        font-weight: normal;
+        transition: all 0.2s ease-in-out;
+        font-size: 19px;
+    }
+    .avatar-upload .avatar-edit input + label:hover {
+        background: #f1f1f1;
+        border-color: #d6d6d6;
+    }
+    
+    .avatar-upload .avatar-edit input + label:hover:after  {
+        color: var(--dark-blue);
+    }
+    .avatar-upload .avatar-edit input + label:after {
+        content: "\ec85";
+        font-family: remixicon!important;
+        color: #757575;
+        position: absolute;
+        top: 6px;
+        left: 0;
+        right: 0;
+        text-align: center;
+        margin: auto;
+    }
+    .avatar-upload .avatar-preview {
+        width: 200px;
+        height: 100px;
+        position: relative;
+        /* box-shadow: 0px 2px 4px 0px rgb(0 0 0 / 10%); */
+        padding: 1px;
+    }
+    .avatar-upload .avatar-preview > div {
+        width: 100%;
+        height: 100%;
+        background-color: var(--vz-input-bg);
+        border: 1px solid var(--vz-input-border);	
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-position: center;
+        border-radius: .25rem;
+    }
+</style>
+{% endblock extra_css %}
+{% block content %}
+            <!-- ============================================================== -->
+            <!-- Start right Content here -->
+            <!-- ============================================================== -->
+            <div class="main-content">
+
+                <div class="page-content" id="main_page_content">
+                    <div class="container-fluid">
+
+                        {% block pagetitle %}
+                        {% include "partials/page-title.html" with pagetitle="Settings" title="WhatsApp Template Parameters" %}
+                        {% endblock pagetitle %}
+
+                        {% block alerts %}
+                            {% include "partials/errors.html" with messages=messages %}
+                        {% endblock alerts %}
+    
+
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="card" id="orderList">
+                                    <form method="POST" id="alert_type_form" enctype="multipart/form-data" action="{% url 'apps.main.settings:alerts-detail-parameter' alert_id=alert.id %}">
+
+                                            <div>
+                                                {% csrf_token %}
+                                                <input type="hidden" class="form-control" name="id" id="alert_id" value="{{ alert.id }}" placeholder="">
+                                            </div>
+
+                                            <div class="card-header border-1 mt-2">
+
+                                                <div class="row align-items-center gy-3">
+                                                    <div class="col-sm-auto">
+                                                        <h5 class="card-title">Alert Name: </h5>
+                                                    </div>
+                                                    <div class="col-auto">
+                                                        <h5 class="card-title border border-radius p-2">
+                                                            {{ alert.name }}
+                                                        </h5>
+                                                    </div>
+                                                </div>
+
+                                                <div class="row align-items-center gy-3 mt-0">
+                                                    <div class="col-sm-auto">
+                                                        <h5 class="card-title ">WhatsApp Template: </h5>
+                                                    </div>
+                                                    <div class="col-auto">
+                                                        <h5 class="card-title border border-radius p-2">
+                                                            {{ whatsapp_template.name }}
+                                                        </h5>
+                                                    </div>
+                                                </div>
+                                            </div>
+ 
+                                            <div class="card-body border-bottom pb-4 parentElement">
+                                                    <div class="row">
+                                                        <div class="col-7">
+                                                            {% if header_params|length > 0 %}
+                                                                {% if header_params_list is not None %}
+                                                                    <div style="border:1px solid #e9ebec;padding:10px;border-radius:5px;">
+                                                                        <h5 class="card-title mt-2 mb-4">Header Parameters</h5>
+                                                                        {% for header_param, alert_header_param in header_params_list %} 
+                                                                            <div class="mt-2 row">
+                                                                                    <div class="col-12">
+                                                                                        <label for="header_parameter_{{ forloop.counter0 }}" class="form-label">Parameter {{ forloop.counter }}</label>
+                                                                                        <input type="text" rows="5" class="form-control header_parameter_textfield" name="header_parameter_text_{{ forloop.counter0 }}" id="header_parameter_text_{{ forloop.counter0 }}" value="">
+                                                                                        <a id="header_para_var_button_{{ forloop.counter0 }}" class="end-button variableButton">
+                                                                                            <svg width="24px" height="24px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="bepo-icon-svg _1ixx0vi0">
+                                                                                            <path d="M8.18543 18.3998H9.6849V16.7564H8.98534C8.11443 16.7564 8.05541 16.2236 8.05541 15.8342V13.4998C8.04315 12.1588 7.22827 12.0577 6.62793 12.0133V11.9859C7.22855 11.9274 8.04315 11.8274 8.05541 10.4864V8.16516C8.05541 7.77585 8.11443 7.24299 8.98534 7.24299H9.6849V5.59998H8.18543C7.12904 5.59998 6.34251 6.19131 6.34251 7.68992V10.1834C6.34251 11.0773 5.1558 11.1775 4.79999 11.1775V12.8213C5.1558 12.8213 6.34251 12.9213 6.34251 13.8161V16.2951C6.34251 17.7941 7.17123 18.3998 8.18543 18.3998Z" fill="var(--theme-color-icon, #545452)"></path>
+                                                                                            <path d="M15.8557 5.59998H14.3132V7.2431H15.0132C15.885 7.2431 15.9418 7.776 15.9418 8.16526V10.4999C15.9559 11.8407 16.7697 11.9416 17.3709 11.986V12.0134C16.7698 12.0721 15.9559 12.1724 15.9418 13.5128V15.8346C15.9418 16.224 15.8851 16.7568 15.0132 16.7568H14.3132V18.4H15.8137C16.87 18.4 17.6557 17.8083 17.6557 16.3097V13.8164C17.6557 12.9213 18.7992 12.8214 19.2 12.8214V11.1775C18.7991 11.1775 17.6557 11.0771 17.6557 10.1834V7.7042C17.6557 6.20657 16.8269 5.59998 15.8557 5.59998Z" fill="var(--theme-color-icon, #545452)"></path>
+                                                                                            </svg>
+                                                                                        </a>
+                                                                                    </div>
+                                                                            </div>
+                                                                        {% endfor %}
+                                                                    </div>
+                                                                {% endif %}
+                                                            {% endif %}
+
+                                                            {% if whatsapp_template.is_header_image == True %}
+                                                                <div id="avatar-form" class="mt-3">
+                                                                    <label for="headerImage" class="form-label">Header Image</label>
+                                                                    <div class="avatar-upload whatsapp-header-upload">
+                                                                        <div class="avatar-edit">
+                                                                            <input type="file" id="headerImage" name="headerImage" accept="{% if whatsapp_template.header_format == 'IMAGE' %} .png, .jpg, .jpeg {% elif whatsapp_template.header_format == 'DOCUMENT' %} .pdf, .xls, .xlsx, .txt, .ppt, .mp3, .docx, .doc, .pptx, .wav {% elif whatsapp_template.header_format == 'VIDEO' %} .mp4, .mov {% elif whatsapp_template.header_format == 'AUDIO' %} .mp3, .wav {% endif%}" />
+                                                                            <label for="headerImage"></label>
+                                                                        </div>
+                                                                        <div class="avatar-preview whatsapp-header-image">
+                                                                            <div id="imagePreview" style="background-image: url('{{ headerImageUrl }}');">
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="pt-1">
+                                                                            <a style="font-size:12px;color:#000;opacity:45%;">Max allowed image size is 5 MB</a>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            {% endif %}
+
+                                                            {% if body_params|length > 0 %}
+                                                                {% if body_params_list is not None %}
+                                                                    <div style="border:1px solid #e9ebec;padding:10px;border-radius:5px;">
+                                                                        <h5 class="card-title mt-2 mb-4">Body Parameters</h5>
+                                                                        {% for body_param, alert_body_param in body_params_list %} 
+                                                                            <div class="mt-2 row">
+                                                                                    <div class="col-12">
+                                                                                        <label for="body_parameter_{{ forloop.counter0 }}" class="form-label">Parameter {{ forloop.counter }}</label>
+                                                                                        <input type="text" rows="5" class="form-control body_parameter_textfield" name="body_parameter_text_{{ forloop.counter0 }}" id="body_parameter_text_{{ forloop.counter0 }}" value="{{ alert_body_param|default:"" }}">
+                                                                                        <a id="body_para_var_button_{{ forloop.counter0 }}" class="end-button variableButton">
+                                                                                            <svg width="24px" height="24px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="bepo-icon-svg _1ixx0vi0">
+                                                                                            <path d="M8.18543 18.3998H9.6849V16.7564H8.98534C8.11443 16.7564 8.05541 16.2236 8.05541 15.8342V13.4998C8.04315 12.1588 7.22827 12.0577 6.62793 12.0133V11.9859C7.22855 11.9274 8.04315 11.8274 8.05541 10.4864V8.16516C8.05541 7.77585 8.11443 7.24299 8.98534 7.24299H9.6849V5.59998H8.18543C7.12904 5.59998 6.34251 6.19131 6.34251 7.68992V10.1834C6.34251 11.0773 5.1558 11.1775 4.79999 11.1775V12.8213C5.1558 12.8213 6.34251 12.9213 6.34251 13.8161V16.2951C6.34251 17.7941 7.17123 18.3998 8.18543 18.3998Z" fill="var(--theme-color-icon, #545452)"></path>
+                                                                                            <path d="M15.8557 5.59998H14.3132V7.2431H15.0132C15.885 7.2431 15.9418 7.776 15.9418 8.16526V10.4999C15.9559 11.8407 16.7697 11.9416 17.3709 11.986V12.0134C16.7698 12.0721 15.9559 12.1724 15.9418 13.5128V15.8346C15.9418 16.224 15.8851 16.7568 15.0132 16.7568H14.3132V18.4H15.8137C16.87 18.4 17.6557 17.8083 17.6557 16.3097V13.8164C17.6557 12.9213 18.7992 12.8214 19.2 12.8214V11.1775C18.7991 11.1775 17.6557 11.0771 17.6557 10.1834V7.7042C17.6557 6.20657 16.8269 5.59998 15.8557 5.59998Z" fill="var(--theme-color-icon, #545452)"></path>
+                                                                                            </svg>
+                                                                                        </a>
+                                                                                    </div>
+                                                                                    <span style="padding-top: 5px; padding-bottom: 10px;">Sample : <strong>{{ body_param|default:"" }}</strong></span>
+                                                                            </div>
+                                                                        {% endfor %}
+                                                                    </div>
+                                                                {% endif %}
+                                                            {% endif %}
+
+                                                            {% if footer_params|length > 0 %}
+                                                                {% if footer_params_list is not None %}
+                                                                    <div style="border:1px solid #e9ebec;padding:10px;border-radius:5px;">
+                                                                        <h5 class="card-title mt-2 mb-4">Footer Parameters</h5>
+                                                                        {% for footer_param, alert_footer_param in footer_params_list %} 
+                                                                            <div class="mt-2 row">
+                                                                                    <div class="col-12">
+                                                                                        <label for="footer_parameter_{{ forloop.counter0 }}" class="form-label">Parameter {{ forloop.counter }}</label>
+                                                                                        <input type="text" rows="5" class="form-control footer_parameter_textfield" name="footer_parameter_text_{{ forloop.counter0 }}" id="footer_parameter_text_{{ forloop.counter0 }}" value="">
+                                                                                        <a id="footer_para_var_button_{{ forloop.counter0 }}" class="end-button variableButton">
+                                                                                            <svg width="24px" height="24px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="bepo-icon-svg _1ixx0vi0">
+                                                                                            <path d="M8.18543 18.3998H9.6849V16.7564H8.98534C8.11443 16.7564 8.05541 16.2236 8.05541 15.8342V13.4998C8.04315 12.1588 7.22827 12.0577 6.62793 12.0133V11.9859C7.22855 11.9274 8.04315 11.8274 8.05541 10.4864V8.16516C8.05541 7.77585 8.11443 7.24299 8.98534 7.24299H9.6849V5.59998H8.18543C7.12904 5.59998 6.34251 6.19131 6.34251 7.68992V10.1834C6.34251 11.0773 5.1558 11.1775 4.79999 11.1775V12.8213C5.1558 12.8213 6.34251 12.9213 6.34251 13.8161V16.2951C6.34251 17.7941 7.17123 18.3998 8.18543 18.3998Z" fill="var(--theme-color-icon, #545452)"></path>
+                                                                                            <path d="M15.8557 5.59998H14.3132V7.2431H15.0132C15.885 7.2431 15.9418 7.776 15.9418 8.16526V10.4999C15.9559 11.8407 16.7697 11.9416 17.3709 11.986V12.0134C16.7698 12.0721 15.9559 12.1724 15.9418 13.5128V15.8346C15.9418 16.224 15.8851 16.7568 15.0132 16.7568H14.3132V18.4H15.8137C16.87 18.4 17.6557 17.8083 17.6557 16.3097V13.8164C17.6557 12.9213 18.7992 12.8214 19.2 12.8214V11.1775C18.7991 11.1775 17.6557 11.0771 17.6557 10.1834V7.7042C17.6557 6.20657 16.8269 5.59998 15.8557 5.59998Z" fill="var(--theme-color-icon, #545452)"></path>
+                                                                                            </svg>
+                                                                                        </a>
+                                                                                    </div>
+                                                                            </div>
+                                                                        {% endfor %}
+                                                                    </div>
+                                                                {% endif %}
+                                                            {% endif %}
+
+                                                            <div id="select2-container" style="display: none;">
+                                                                <select id="select2-dropdown">
+                                                                    {% for field in Fields %}
+                                                                        <option value="{{ field.field }}">{{ field.name }}</option>
+                                                                    {% endfor %}
+                                                                  {% comment %} <option value="option2">Option 2</option>
+                                                                  <option value="option3">Option 3</option> {% endcomment %}
+                                                                </select>
+                                                            </div>
+                                                        </div>
+
+                                                        {% comment %} Alert Preview {% endcomment %}
+                                                        <div class="col-4">
+                                                            <div style="box-shadow: 0 0 5px 0 #ccc;padding:15px;">
+                                                                <h5 class="card-title mb-3">Message Preview</h5>
+                                                                <div class="alert-msg-preview border p-3" id="alert-msg-preview-{{ alert.id }}" >
+                                                                {% if alert.whatsapp_template.header_html is not None and alert.whatsapp_template.header_html|length > 1 %}
+                                                                    <span class="mb-2 msg_preview_header" style="color:#495057;">{{ alert.whatsapp_template.header_html|default:""|safe }}</span>
+                                                                {% endif %}
+
+                                                                {% if alert.whatsapp_template.body_html is not None and alert.whatsapp_template.body_html|length > 1 %}
+                                                                    <div class="mb-2 msg_preview_body" style="color:#495057;">{{ alert.whatsapp_template.body_html|default:""|safe }}</div>
+                                                                {% endif %}
+
+                                                                {% if alert.whatsapp_template.footer_html is not None and alert.whatsapp_template.footer_html|length > 1 %}
+                                                                    <span class="msg_preview_footer" style="color:#495057;">{{ alert.whatsapp_template.footer_html|default:""|safe }}</span>
+                                                                {% endif %}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                            </div>
+
+                                            <div class="p-0 mt-4">
+                                                <div class="col-sm-auto mt-2">
+                                                    <div class="gap-1 flex-wrap">
+                                                        <button type="submit" class="btn btn-success add-btn" id="profile_submit_btn"><i class="ri-save-line align-bottom me-1"></i> Submit</button>
+                                                    </div>
+                                                    <div class="mt-3">
+                                                        <span class="submit_profile_form_status"></span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                                <!--end card-->
+                            </div>
+                            <!--end col-->
+                        </div>
+                        <!--end row-->
+            
+                    
+
+
+                        
+                    </div>
+                    <!-- container-fluid -->
+                </div>
+                <!-- End Page-content -->
+
+            {% block footer %}
+            {% include "partials/footer.html" %}
+            {% endblock footer %}
+            </div>
+            <!-- end main content-->
+{% endblock content %}
+
+{% block extra_js %}
+
+<script>
+    function readURL(input) {
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+            reader.onload = function(e) {
+                $('#imagePreview').css('background-image', 'url('+e.target.result +')');
+                $('#imagePreview').hide();
+                $('#imagePreview').fadeIn(650);
+            }
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+    $("#headerImage").change(function() {
+
+        if(this.files[0].size > 5120000){
+            alert("Max allowed image size is 5 MB!");
+            this.value = "";
+        }
+        else{
+
+        //This line will upload image to backend
+        // document.getElementById("submit-profile").submit();
+
+        //This line will create preview of image
+        readURL(this);
+        }
+    });
+</script>
+
+<!-- list.js min js -->
+<script src="{% static 'select2/select2.js'%}"></script>
+
+<!-- list.js min js -->
+<!-- <script src="{% static 'libs/list.js/list.min.js'%}"></script> -->
+
+<!--list pagination js-->
+<!-- <script src="{% static 'libs/list.pagination.js/list.pagination.min.js'%}"></script> -->
+
+
+
+        <script>
+            {% comment %} var alertType = document.getElementById("alertType");
+            var alertTypeChoices = new Choices(alertType, {
+                searchEnabled: false,
+            }); {% endcomment %}
+
+            {% comment %} $(document).ready(function() {
+                var body_params_count = {{body_params_count}};
+                var header_params_count = {{header_params_count}};
+                var footer_params_count = {{footer_params_count}};
+                if (body_params_count > 0){      
+            
+                }
+            }); {% endcomment %}
+
+            let currentButtonPosition;
+            let focusedElementId;
+            let variableButtonId;
+            let currentParaNumber;
+            let currentParaType;
+            let selectedValues = [];
+            
+
+            $(document).ready(function() {
+
+            
+
+                    const parentElement = document.querySelector('.parentElement');
+                    const inputFields = parentElement.querySelectorAll('input[type="text"]');
+
+                    //This loop will load default loaded values on first time opening page
+                    for (let i = 0; i < inputFields.length; i++) {
+                        const focusedElementId = inputFields[i].id;
+                        const oldinputValues = $('#' + focusedElementId).val().split('');
+                        selectedValues = [...oldinputValues].join(''); 
+                        currentParaNumber = focusedElementId.slice(-1);
+                        currentParaType = focusedElementId.split('_')[0];
+                        if (selectedValues.length !== 0){
+                            replaceValues(selectedValues,currentParaType,currentParaNumber);
+                        }
+                    }
+
+                    //This lines will assume that cursor is in first field by default when page loaded and if somebody directly click on para button without clicking in field
+                    if (inputFields.length > 0) {
+                        focusedElementId = inputFields[0].id;
+                        currentParaNumber = focusedElementId.slice(-1);
+                        currentParaType = focusedElementId.split('_')[0];
+                    }
+
+                    inputFields.forEach((input) => {
+                        input.addEventListener('focus', () => {
+                          focusedElementId = input.id;
+                          currentParaNumber = focusedElementId.slice(-1);
+                          currentParaType = focusedElementId.split('_')[0];
+                          //console.log("Current para type:", currentParaType);
+                          //console.log("Cursor is in input field:", focusedElementId);
+                          setInputListenerOnFocusedElement();
+                        }); 
+                    });
+                    
+
+                // Initialize Select2 on the hidden dropdown
+                $('#select2-dropdown').select2();
+              
+                // Store the selected values in an array
+                selectedValues = []; 
+              
+                // When the custom button is clicked, open the Select2 dropdown
+                $('.variableButton').on('click', function() {
+                    currentButtonPosition = $(this).offset();
+
+                    $('#select2-dropdown').parent().css({
+                        'position': 'absolute',
+                        'left': currentButtonPosition.left - 200,
+                        'top': currentButtonPosition.top - 400
+                    });
+                    
+                    $('#select2-container').show();
+                    $('#select2-dropdown').select2('open');
+                    $('#select2-container').css('opacity', '0');
+
+                
+
+                    // Set the position of the dropdown
+                    var previousfieldNumber = focusedElementId.slice(-1);
+
+                    var buttonNumber = this.id.slice(-1);
+                    
+                    var inputFieldNrButton = this.previousElementSibling;
+                    if (inputFieldNrButton && inputFieldNrButton.tagName === "INPUT") {
+                    var inputFieldNrButton = inputFieldNrButton.id;
+                    focusedElementId = inputFieldNrButton;
+
+                    currentParaNumber = focusedElementId.slice(-1);
+                    currentParaType = focusedElementId.split('_')[0];
+                    } 
+
+                    //This logic is added if somebody is focused in field 1 and directly click on button 2 then it will fetch selectedvalues of field 2 first
+                    {% comment %} if(buttonNumber !== previousfieldNumber){
+                        //console.log('button of different field clicked');
+                        //console.log('focused element when diff button clicked', focusedElementId);
+                        const oldinputValues = $('#' + focusedElementId).val().split('');
+                        selectedValues.length = 0;
+                        selectedValues.push(...oldinputValues);
+                    } {% endcomment %}
+
+                    //Everytime it will check currently focused element and check it's old value before adding new option or manual value to it
+                    const oldinputValues = $('#' + focusedElementId).val().split('');
+                    selectedValues.length = 0;
+                    selectedValues.push(...oldinputValues);
+
+
+                });
+              
+                // When a value is selected from the dropdown
+                $('#select2-dropdown').on('select2:select', function (e) {
+
+                  // Get the selected value
+                  let selectedValue = e.params.data.id;
+                  selectedValue = '{% verbatim %}{{' + selectedValue + '}}{% endverbatim %}';
+                  
+                  //console.log('selected value on clicking select option:',selectedValue);
+              
+                  //replaceValues(selectedValues,currentParaType,currentParaNumber);
+
+
+                  // Get the current cursor position in the input text field
+                  const cursorPosition = $('#' + focusedElementId)[0].selectionStart;
+
+                  //console.log('cursor position:',cursorPosition);
+              
+                  // Add the selected value at the cursor position
+                  selectedValues.splice(cursorPosition, 0, selectedValue);
+                  //console.log('selected values after adding options:', selectedValues);
+
+
+                  // Update the input text field with unique selected values
+                  updateInputText();
+              
+                  // Hide the Select2 dropdown after the selection is made
+                  $('#select2-container').hide();
+                });
+
+                $('#select2-dropdown').on('select2:open', function (e) {
+                    // Clear all selections when the menu is opened
+                    $(this).val(null).trigger('change');
+                });
+
+              
+                // When a value is removed from the dropdown
+                {% comment %} $('#select2-dropdown').on('select2:unselect', function (e) {
+                  // Get the removed value
+                  const removedValue = e.params.data.id;
+              
+                  // Remove the value from the array
+                  const index = selectedValues.indexOf(removedValue);
+                  if (index > -1) {
+                    selectedValues.splice(index, 1);
+                  }
+              
+                  // Update the input text field with unique selected values
+                  updateInputText();
+                }); {% endcomment %}
+              
+                // Function to update the input text field with the selected values
+                function updateInputText() {
+
+                    //console.log('selected values:',selectedValues);
+                  // Update the input text field with unique selected values
+                  $('#' + focusedElementId).val(selectedValues.join(''));
+                    var joinedvalues = $('#' + focusedElementId).val(selectedValues.join(''));
+                  // Reset the cursor position to the end of the input field
+                  const inputField = $('#' + focusedElementId)[0];
+                  inputField.selectionStart = inputField.selectionEnd = inputField.value.length;
+
+                  //Use it to update message preview after selecting option
+                  var combinedText = selectedValues.join('');
+                  replaceValues(combinedText,currentParaType,currentParaNumber);
+
+                }
+
+                //This function replaces values in preview while making changes in variables
+                function replaceValues(paraValue,paraType,paraNumber) {
+                    //console.log(paraValue,paraType,paraNumber);
+
+                    {% comment %} paraValue = '{% verbatim %}{{' + paraValue + '}}{% endverbatim %}'; {% endcomment %}
+
+                    function repAsPara(msg_preview){
+                        if (paraNumber === "0"){
+                            msg_preview.find('.para_1').text(paraValue);
+                        } else if(paraNumber === "1"){
+                            msg_preview.find('.para_2').text(paraValue);
+                        } else if(paraNumber === "2"){
+                            msg_preview.find('.para_3').text(paraValue);
+                        }else if(paraNumber === "3"){
+                            msg_preview.find('.para_4').text(paraValue);
+                        }else if(paraNumber === "4"){
+                            msg_preview.find('.para_5').text(paraValue);
+                        }else if(paraNumber === "5"){
+                            msg_preview.find('.para_6').text(paraValue);
+                        }else if(paraNumber === "6"){
+                            msg_preview.find('.para_7').text(paraValue);
+                        }else if(paraNumber === "7"){
+                            msg_preview.find('.para_8').text(paraValue);
+                        }
+                    }
+
+                    if (paraType === "body"){
+                        repAsPara($('.msg_preview_body'));
+                    } else if(paraType === "header"){
+                        repAsPara($('.msg_preview_header'));
+                    } else if(paraType === "footer"){
+                        repAsPara($('.msg_preview_footer'));
+                    }
+                    
+                }
+
+                function setInputListenerOnFocusedElement(){
+                    // When the input text field is edited manually
+                    $('#' + focusedElementId).on('input', function() {
+                        // Update the selectedValues array with the values from the input text
+                        //console.log('listener called');
+                        const inputValues = $(this).val().split('');
+                        selectedValues.length = 0;
+                        selectedValues.push(...inputValues);
+
+                        //Use it to update message preview while typing live
+                        var manualtextValue = $(this).val();       
+                        
+                        // Call the function to replace values of message preview
+                        replaceValues(manualtextValue,currentParaType,currentParaNumber);
+                        
+                    });  
+                }
+                setInputListenerOnFocusedElement();
+                            
+              });
+
+        </script>
+
+
+        
+{% endblock extra_js %}

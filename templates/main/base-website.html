@@ -1,0 +1,56 @@
+{% load static %}
+<!-- base-website.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1.0, minimum-scale=1.0" name="viewport">
+    <title>{% block title %}WhatsApp System - BlueEra Softech{% endblock %}</title>
+    {% block meta %}{% endblock %}
+
+    <!-- Favicons -->
+    <link href="{% static 'favicon.png' %}" rel="icon">
+    <link href="{% static 'apple-touch-icon.png' %}" rel="apple-touch-icon">
+
+    <!-- Fonts -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" rel="stylesheet" type="text/css">
+
+    <!--Common CSS-->
+    <link href="{% static 'website/css/common/common.css' %}" rel="stylesheet" type="text/css"/>
+
+
+    <!-- Vendor CSS Files -->
+    {% block analytics %}
+        <!-- Google tag (gtag.js) -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-PYCSS798PC"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+
+            gtag('config', 'G-PYCSS798PC');
+        </script>
+    {% endblock %}
+
+    {% block stylesheets %}{% endblock %}
+
+</head>
+<body>
+    {% block preloader %}
+        <div id="preloader"></div>
+    {% endblock %}
+
+    <div id='main-content'>
+        {% block body %}
+        {% endblock %}
+    </div>
+
+
+    <!-- Vendor JS Files -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.slim.min.js" integrity="sha512-5NqgLBAYtvRsyAzAvEBWhaW+NoB+vARl6QiA02AFMhCWvPpi7RWResDcTGYvQtzsHVCfiUhwvsijP+3ixUk1xw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    {% block javascripts %}
+    {% endblock %}
+    <script src="{% static 'website/js/common/preloader.js' %}"></script>
+
+</body>
+</html>

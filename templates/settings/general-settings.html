@@ -1,0 +1,150 @@
+{% extends "partials/base.html" %}
+{% load static %}
+{% block title %}General Settings{% endblock title %}
+{% block extra_css %}
+<link href="{% static 'select2/select2.css'%}" rel="stylesheet" type="text/css" />
+{% endblock extra_css %}
+{% block content %}
+            <!-- ============================================================== -->
+            <!-- Start right Content here -->
+            <!-- ============================================================== -->
+            <div class="main-content">
+
+                <div class="page-content">
+                    <div class="container-fluid">
+
+                        {% block pagetitle %}
+                        {% include "partials/page-title.html" with pagetitle="Settings" title="General Settings" %}
+                        {% endblock pagetitle %}
+
+                        {% block alerts %}
+                            {% include "partials/errors.html" with messages=messages %}
+                        {% endblock alerts %}
+    
+                        <div class="row">
+                            <div class="col-xl-9">
+
+                                <div class="card" id="database_card">
+                                    <div class="card-header border-1">
+                                        <div class="row align-items-center gy-3">
+                                            <div class="col-sm">
+                                                <h5 class="card-title mb-0">General Settings</h5>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="card-body pt-3">
+                                        <form method="post" id="database_configuration_form" action="{% url 'apps.main.settings:general-settings-submit' %}">
+                                            {% csrf_token %}
+
+                                            <div class="mt-3 row" style="margin-left: 0; margin-right: 0;">
+                                                <div class="col-xxl-6 col-md-6 form-check form-switch form-switch-success">
+                                                    <input class="form-check-input" type="checkbox" role="switch" id="is_data_to_be_encrypted" name="is_data_to_be_encrypted" {% if configData.is_data_to_be_encrypted == True %}checked{% endif %}>
+                                                    <label class="form-check-label" for="is_data_to_be_encrypted">Encrypt Database?</label>
+                                                    <span class="text-muted pt-2" style="display: block;">Would you like to encrypt database? If any further help required kindly <a href="https://blueerasoftech.com">Get in Touch</a></span>
+                                                </div>
+                                            </div>
+
+                                            <hr class="custom">
+
+                                            <div id="divMaxOldRecords" class="mt-4 row">
+                                                <div class="col-xxl-6 col-md-6">
+                                                    <label for="max_old_records_days" class="form-label" >Select Max number of duration for which you would like to retain data</label>
+                                                    <select class="form-control" name="max_old_records_days" id="max_old_records_days">
+                                                        <option value="30" {% if configData.max_old_records_days == 30 %} selected {% endif %}>1 Month</option>
+                                                        <option value="90" {% if configData.max_old_records_days == 90 %} selected {% endif %}>3 Month</option>
+                                                        <option value="180" {% if configData.max_old_records_days == 180 %} selected {% endif %}>6 Month</option>
+                                                        <option value="365" {% if configData.max_old_records_days == 365 %} selected {% endif %}>1 Year</option>
+                                                        <option value="730" {% if configData.max_old_records_days == 730 %} selected {% endif %}>2 Years</option>
+                                                        <option value="1095" {% if configData.max_old_records_days == 1095 %} selected {% endif %}>3 Years</option>
+                                                        <option value="1825" {% if configData.max_old_records_days == 1825 %} selected {% endif %}>5 Years</option>
+                                                        <option value="0" {% if configData.max_old_records_days is None or configData.max_old_records_days == 0 %} selected {% endif %}>Lifetime</option>
+                                                    </select>
+                                                    {% if nextDeleteOldRecords and nextDeleteOldRecords != "-" %}
+                                                        <span class="text-dark pt-2" style="display: block">Next run on: <strong>{{ nextDeleteOldRecords }}</strong></span>
+                                                    {% endif %}
+                                                    <span class="text-muted pt-2" style="display: block;">Once data deleted would not be retrieved. Please contact administration for any further help. <a href="https://blueerasoftech.com">Get in Touch</a></span>
+                                                    
+                                                </div>
+                                                <div class="col-xxl-6 col-md-6">
+                                                </div>
+                                            </div>
+
+
+                                            <hr class="custom" />
+
+                                            <div id="divUserSync" class="mt-4 row">
+                                                <div class="col-xxl-6 col-md-6">
+                                                    <label for="user_sync_interval" class="form-label" >Select interval for syncing BioStar user automatically</label>
+                                                    <select class="form-control" name="user_sync_interval" id="user_sync_interval">
+                                                        <option value="1" {% if configData.user_sync_interval == 1 %} selected {% endif %}>Daily</option>
+                                                        <option value="7" {% if configData.user_sync_interval == 7 %} selected {% endif %}>Weekly</option>
+                                                        <option value="30" {% if configData.user_sync_interval == 30 %} selected {% endif %}>Monthy</option>
+                                                        <option value="0" {% if configData.user_sync_interval is None or configData.user_sync_interval == 0 %} selected {% endif %}>Manual</option>
+                                                    </select>
+                                                    {% if nextUserSyncTime and nextUserSyncTime != "-" %}
+                                                        <span class="text-dark pt-2" style="display: block">Next run on: <strong>{{ nextUserSyncTime }}</strong></span>
+                                                    {% endif %}
+                                                    <span class="text-muted pt-2" style="display: block;">Select interval for periodically updating user list from BioStar. For any further assistance <a href="https://blueerasoftech.com">Get in Touch</a>.</span>
+
+                                                    
+                                                    <div id="div_user_sync_date_time" class="mt-4">
+                                                        <label for="user_sync_time" class="form-label">Select Time on which you would like to sync users from BioStar.</label>
+                                                        <input type="text" class="form-control flatpickr-input" style="max-width: 310px" data-provider="timepickr" name="user_sync_time" id="user_sync_time" data-no-calendar="true" data-time-hrs="true" readonly="readonly" value="{{ user_sync_time|default:'' }}">
+                                                    </div>
+
+                                                    <div class="mt-4 form-check form-switch form-switch-success">
+                                                        <input class="form-check-input" type="checkbox" role="switch" id="is_enable_user_if_already_enabled" name="is_enable_user_if_already_enabled" {% if configData.is_enable_user_if_already_enabled == True %}checked{% endif %}>
+                                                        <label class="form-check-label" for="is_enable_user_if_already_enabled">Enable/Disable Users as per user status in BioStar?</label>
+                                                        <span class="text-muted pt-2" style="display: block;">Would you like to Enable (New/Updated) User when Syncing if already Enabled in BioStar? For any further assistance <a href="https://blueerasoftech.com">Get in Touch</a></span>
+                                                    </div>
+                                                </div>
+                                                <div class="col-xxl-6 col-md-6">
+                                                </div>
+                                            </div>
+                                            
+
+                                            <div class="col-sm-auto mt-4 mb-4">
+                                                <div class="gap-1 flex-wrap">
+                                                    <button type="submit" class="btn btn-success add-btn" data-bs-toggle="modal" id="db_submit_btn" data-bs-target="#showModal"><i class="ri-save-line align-bottom me-1"></i> Submit</button>
+                                                </div>
+                                            </div>
+
+                         
+                                        </form>
+
+                                    </div>
+
+                                </div>
+        
+                            </div>
+                            <!--end col-->
+                        </div>
+                        <!--end row-->            
+                        
+                    
+                    </div>
+                    <!-- container-fluid -->
+                </div>
+                <!-- End Page-content -->
+
+            {% block footer %}
+            {% include "partials/footer.html" %}
+            {% endblock footer %}
+            </div>
+            <!-- end main content-->
+{% endblock content %}
+
+{% block extra_js %}
+<script src="{% static 'select2/select2.js'%}"></script>
+<script>
+    $('#max_old_records_days').select2({
+        placeholder: "Select any one",
+        minimumResultsForSearch: -1
+     });
+
+     $('#user_sync_interval').select2({
+        placeholder: "Select any one",
+        minimumResultsForSearch: -1
+     });
+</script>
+{% endblock extra_js %}

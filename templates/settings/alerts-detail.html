@@ -1,0 +1,433 @@
+{% extends "partials/base.html" %}
+{% load static %}
+{% block title %}Alert Details{% endblock title %}
+{% block extra_css %}
+<link href="{% static 'select2/select2.css'%}" rel="stylesheet" type="text/css" />
+{% endblock extra_css %}
+{% block content %}
+            <!-- ============================================================== -->
+            <!-- Start right Content here -->
+            <!-- ============================================================== -->
+            <div class="main-content">
+
+                <div class="page-content">
+                    <div class="container-fluid">
+
+                        {% block pagetitle %}
+                        {% include "partials/page-title.html" with pagetitle="Settings" title="Alerts" %}
+                        {% endblock pagetitle %}
+
+                        {% block alerts %}
+                            {% include "partials/errors.html" with messages=messages %}
+                        {% endblock alerts %}
+    
+
+                            <div class="row">
+                                <div class="col-lg-9">
+                                    <div class="card" id="orderList">
+                                        <form method="POST" id="alert_type_form" action="{% url 'apps.main.settings:alerts-update' %}">
+                                            <div class="card-header border-1">
+                                                <div class="row align-items-center gy-3">
+                                                    <div class="col-sm-auto">
+                                                        <h5 class="card-title mb-0">Select Alert Type</h5>
+                                                    </div>
+                                                    <div class="col-sm-4">
+                                                        <div>
+                                                            {% csrf_token %}
+                                                            <input type="hidden" class="form-control" name="id" id="alert_id" value="{{ alert.id|default:'0' }}" placeholder="">
+
+                                                            <select class="form-control" data-choices data-choices-search-false
+                                                                name="alerts_type" id="alertType" {% if alert.id > 0 %} disabled {% endif %}>
+                                                                {% if configData.is_tna_enabled_in_biostart == True %}
+                                                                    <option value="missing_in_punch" {% if alert.alerts_type == 'missing_in_punch' %}selected{% endif %}>Missing In Punch</option>
+                                                                    <option value="missing_out_punch" {% if alert.alerts_type == 'missing_out_punch' %}selected{% endif %}>Missing Out Punch</option>
+                                                                    <option value="late_in" {% if alert.alerts_type == 'late_in' %}selected{% endif %}>Late In</option>
+                                                                    <option value="insufficient_work_hours" {% if alert.alerts_type == 'insufficient_work_hours' %}selected{% endif %}>insufficient Work Hours</option>
+                                                                    {% comment %} <option value="early_out" {% if alert.alerts_type == 'early_out' %}selected{% endif %}>Early Out</option> {% endcomment %}
+                                                                    <option value="absent" {% if alert.alerts_type == 'absent' %}selected{% endif %}>Absent</option>
+                                                                    <option value="present" {% if alert.alerts_type == 'present' %}selected{% endif %}>Present</option>
+                                                                    {% comment %} <option value="half_day" {% if alert.alerts_type == 'half_day' %}selected{% endif %}>Absent - Half Day</option> {% endcomment %}
+                                                                {% endif %}    
+                                                                <option value="announcement" {% if alert.alerts_type == 'announcement' %}selected{% endif %}>Announcement</option>
+                                                                <option value="entry_realtime" {% if alert.alerts_type == 'entry_realtime' %}selected{% endif %}>Entry Realtime</option>
+                                                                <option value="exit_realtime" {% if alert.alerts_type == 'exit_realtime' %}selected{% endif %}>Exit Realtime</option>
+                                                                {% comment %} <option value="user_sync" {% if alert.alerts_type == 'user_sync' %}selected{% endif %}>User Sync</option> {% endcomment %}
+                                                                <option value="time_sensitive_realtime" {% if alert.alerts_type == 'time_sensitive_realtime' %}selected{% endif %}>Time Sensitive Realtime</option>
+                                                                <option value="bio_star_uptime_check" {% if alert.alerts_type == 'bio_star_uptime_check' %}selected{% endif %}>BioStar Uptime Check</option>
+                                                                <option value="event_types" {% if alert.alerts_type == 'event_types' %}selected{% endif %}>Event Types</option>
+                                                                {% comment %} <option value="birthday_greetings" {% if alert.alerts_type == 'birthday_greetings' %}selected{% endif %}>Birthday Greetings</option> {% endcomment %}
+                                                                {% comment %} <option value="qr_code_realtime" {% if alert.alerts_type == 'qr_code_realtime' %}selected{% endif %}>QR Code Realtime</option> {% endcomment %}
+                                                                {% comment %} <option value="monthly_attentdance {% if alert.alerts_type == 'monthly_attentdance' %}selected{% endif %}">Monthly Attentdance</option> {% endcomment %}
+                                                            </select>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="mt-3 col-sm-auto form-check form-switch form-switch-success">
+                                                        <div class="d-flex gap-1 flex-wrap">
+                                                            <input class="form-check-input" type="checkbox" role="switch" id="enableAlert" name="active" {% if alert.active == True %}checked{% endif %}>
+                                                            <label class="form-check-label" for="enableAlert">Enable</label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        
+                                                <div class="card-body">
+                                                    
+                                                    
+
+                                                    <div class="mt-4 row">
+                                                        <div class="col-xxl-6 col-md-6">
+                                                            <label for="name" class="form-label">Alert Name</label>
+                                                            <input type="text" class="form-control" name="name" id="alert_name" value="{{ alert.name|default:"" }}" placeholder="Name of Alert">
+                                                        </div>
+
+
+                                                        
+                                                        <div id="div_realtime_trigger_time" class="col-xxl-6 col-md-6" style="{% if alert.alerts_type != "entry_realtime" and alert.alerts_type != "exit_realtime" and alert.alerts_type != "qr_code_realtime" and alert.alerts_type != "bio_star_uptime_check" and alert.alerts_type != "event_types" %} display: none {% endif %}">
+                                                            <label for="alert_deviation" class="form-label">Trigger time interval for Refreshing Data</label>
+                                                            <input type="text" class="form-control" name="deviation_offset" id="alert_deviation" value="{{ alert.deviation_offset|default:'1' }}" placeholder="50">
+                                                        </div>
+
+                                                        <div id="div_shift_trigger_time" class="col-xxl-6 col-md-6" style="{% if alert.alerts_type != "missing_in_punch" and alert.alerts_type != "missing_out_punch" and alert.alerts_type != "absent" and alert.alerts_type != "present" and alert.alerts_type != "late_in" and alert.alerts_type != "insufficient_work_hours" %} display: none {% endif %}">
+                                                            <label for="alert_shift_deviation" class="form-label">Trigger time in minutes after shift time it will send notifications</label>
+                                                            <input type="text" class="form-control" name="alert_shift_deviation" id="alert_shift_deviation" value="{{ alert.deviation_offset|default:'90' }}" placeholder="50">
+                                                        </div>
+
+                                                        <div id="div_cron_date_time" class="col-xxl-6 col-md-6" style="{% if alert is None or alert.id == 0 or alert.id is None %} display: none; {% elif alert.alerts_type != "announcement" %} display: none; {% endif %}">
+                                                            <label for="cron_date_time" class="form-label">Select Date & Time on which you would like to send Announcement.</label>
+                                                            <input type="text" class="form-control flatpickr-input" data-provider="flatpickr" name="cron_date_time" id="cron_date_time"  data-date-format="d M, Y" data-enable-time="" readonly="readonly" value="{{ cron_date_time_str }}">
+                                                        </div>
+
+
+                                                        <div id="div_birthday_greetings" class="col-xxl-6 col-md-6" style="{% if alert.alerts_type != "birthday_greetings" %} display: none; {% endif %}">
+                                                            <label for="birthday_greetings_time" class="form-label">Select Time on which you would like to send Birthday Greetings.</label>
+                                                            <input type="text" class="form-control flatpickr-input" data-provider="timepickr" name="birthday_greetings_time" id="birthday_greetings_time" data-no-calendar="true" data-time-hrs="true" readonly="readonly" value="{{ cron_date_time_str }}">
+                                                        </div>
+
+                                                        <div id="div_user_sync" class="col-xxl-6 col-md-6" style="{% if alert.alerts_type != "user_sync" %} display: none; {% endif %}">
+                                                            <label for="user_sync_time" class="form-label">Select Time on which you would like to sync users from Suprema.</label>
+                                                            <input type="text" class="form-control flatpickr-input" data-provider="timepickr" name="user_sync_time" id="user_sync_time" data-no-calendar="true" data-time-hrs="true" readonly="readonly" value="{{ cron_date_time_str }}">
+                                                        </div>
+
+                                                    </div>
+
+
+                                                    <div id="div_time_sensitive_realtime" class="mt-4 col-xxl-12 col-md-12" style="{% if alert.alerts_type != "time_sensitive_realtime" %} display: none; {% endif %}">
+                                                        <div class="row">
+                                                            <div class="col-xxl-3 col-md-3">
+                                                                <label for="time_sensitive_start_time" class="form-label">Select Start Time</label>
+                                                                <input type="text" class="form-control flatpickr-input" data-provider="timepickr" name="time_sensitive_start_time" id="time_sensitive_start_time" data-no-calendar="true" data-time-hrs="true" readonly="readonly" value="{{ cron_start_time_str|default:'' }}">
+                                                            </div>
+                                                            <div class="col-xxl-3 col-md-3">
+                                                                <label for="time_sensitive_end_time" class="form-label">Select End Time</label>
+                                                                <input type="text" class="form-control flatpickr-input" data-provider="timepickr" name="time_sensitive_end_time" id="time_sensitive_end_time" data-no-calendar="true" data-time-hrs="true" readonly="readonly" value="{{ cron_end_time_str|default:'' }}">
+                                                            </div>
+                                                            <div class="col-xxl-6 col-md-6">
+                                                                <label for="user_sync_time" class="form-label">Select Days</label>
+                                                                <select class="form-control" multiple="multiple" name="select_days" id="selectDays">
+                                                                    <option value="-1" disabled>All Days</option>
+                                                                    <option value="0" {% if "0" in selected_days %} selected {% endif %}>Mondays</option>
+                                                                    <option value="1" {% if "1" in selected_days %} selected {% endif %}>Tuesday</option>
+                                                                    <option value="2" {% if "2" in selected_days %} selected {% endif %}>Wednesday</option>
+                                                                    <option value="3" {% if "3" in selected_days %} selected {% endif %}>Thursday</option>
+                                                                    <option value="4" {% if "4" in selected_days %} selected {% endif %}>Friday</option>
+                                                                    <option value="5" {% if "5" in selected_days %} selected {% endif %}>Saturday</option>
+                                                                    <option value="6" {% if "6" in selected_days %} selected {% endif %}>Sunday</option>
+                                                                </select>
+                                                                <span class="text-muted pt-2" style="display: block;">Select days on which you would like to receive notifications for sechduled events. Keep blank for all days.</span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    
+                                                    <div id="divUserGroupId" class="mt-3 row" style="{% if alert.alerts_type == "qr_code_realtime" or alert.alerts_type == "bio_star_uptime_check" %} display: none; {% endif %}">
+                                                        <div class="col-xxl-6 col-md-6">
+                                                            <label for="userGroupsList" class="form-label" >Select User Groups to Enable Alert</label>
+                                                            <select class="form-control" multiple="multiple" name="user_groups" id="userGroupsList">
+                                                                {% for user_group in user_groups %}
+                                                                    <option value="{{ user_group.USRGRUID }}" {% if user_group|stringformat:'s' and user_group.USRGRUID in selected_user_groups_ids %} selected {% endif %}>{{ user_group.NM }}</option>
+                                                                {% endfor %}
+                                                            </select>
+                                                        </div>
+                                                        <div class="col-xxl-6 col-md-6">
+                                                            <label for="departmentsList" class="form-label" >Select Departments to Enable Alert</label>
+                                                            <select class="form-control" multiple="multiple" name="departments" id="departmentsList">
+                                                                {% for department in departments %}
+                                                                    <option value="{{ department }}" {% if department in selected_departments %} selected {% endif %}>{{ department }}</option>
+                                                                {% endfor %}
+                                                            </select>
+                                                        </div>
+                                                    </div>
+
+                                                    
+                                                    <div id="divDoorsDevicesId" class="mt-3 row" style="{% if alert.alerts_type == "qr_code_realtime" or alert.alerts_type == "bio_star_uptime_check" %} display: none; {% endif %}">
+                                                        <div class="col-xxl-12 col-md-12">
+                                                            <label for="deviceList" class="form-label" >Select Devices to Enable Alert</label>
+                                                            <select class="form-control" multiple="multiple" name="devices" id="deviceList">
+                                                                {% for device in devices %}
+                                                                    <option value="{{ device.DEVID }}" {% if device and device.DEVID|stringformat:'s' in selected_devices_ids %} selected {% endif %}>{{ device.NM }}</option>
+                                                                {% endfor %}
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                    <div id="divShiftsId" class="mt-3 row" style="{% if configData.is_tna_enabled_in_biostart == True %} display: none; {% elif alert.alerts_type == "qr_code_realtime" or alert.alerts_type == "bio_star_uptime_check" %} display: none; {% endif %}">
+                                                        <div class="col-xxl-12 col-md-12">
+                                                            <label for="shiftsList" class="form-label" >Select Shifts to Enable Alert</label>
+                                                            <select class="form-control" multiple="multiple" name="shifts" id="shiftsList">
+                                                                {% for shift in shifts %}
+                                                                    <option value="{{ shift.name }}" {% if shift and shift.name|stringformat:'s' in selected_shifts_ids %} selected {% endif %}>{{ shift.name }}</option>
+                                                                {% endfor %}
+                                                            </select>
+                                                        </div>
+                                                    </div>
+
+
+                                                    <div id="divEventTypesId" class="mt-3 row" style="{% if configData.is_tna_enabled_in_biostart == True %} display: none; {% elif alert.alerts_type != "event_types" %} display: none; {% endif %}">
+                                                        <div class="col-xxl-12 col-md-12">
+                                                            <label for="eventTypesList" class="form-label" >Select Event Types to Enable Alerts</label>
+                                                            <select class="form-control" multiple="multiple" name="eventTypes" id="eventTypesList">
+                                                                {% for eventType in eventTypes %}
+                                                                    <option value="{{ eventType.code }}" {% if eventType and eventType.code in selected_event_types_codes %} selected {% endif %}>{{ eventType.name }}[{{ eventType.code }}]</option>
+                                                                {% endfor %}
+                                                            </select>
+                                                        </div>
+                                                    </div>
+
+                            
+                                                    <div id="divWhatsAppTemplate" class="mt-3 row" style="{% if alert.alerts_type == 'user_sync' %} display: none; {% endif %}">
+                                                        <div class="col-xxl-6 col-md-6">
+                                                            <label for="whatsappTemplate" class="form-label">Select WhatsApp Template</label>
+                                                            <select class="form-control" data-choices data-choices-search-false
+                                                                    name="whatsapp_template" id="whatsappTemplate">
+                                                                    {% for whatsapp_template in whatsapp_templates %}
+                                                                        <option value="{{ whatsapp_template.name }}" {% if alert.whatsapp_template and alert.whatsapp_template.name == whatsapp_template.name %} selected {% endif %}>{{ whatsapp_template.name }}</option>
+                                                                    {% endfor %}
+                                                            </select>
+                                                        </div>
+                                                        {% if alert and alert.id > 0 %}
+                                                            <div class="col-xxl-6 col-md-6" style="max-width: 250px;">
+                                                                <label for="template_parameters" class="form-label" style="color: white !important;">.</label>
+                                                                <a href="{% url 'apps.main.settings:alerts-detail-parameter' alert_id=alert.id %}" class="btn btn-success add-btn d-flex" id="template_parameters"><i class="ri-pencil-line align-bottom me-1"></i> Edit Template Parameters</a>
+                                                            </div>
+                                                        {% endif %}
+                                                    </div>
+
+
+                                                    <hr id='divIsNotSendToUsersHr' class="custom" />
+
+                                                    <div id="divIsNotSendToUsers" class="mt-3 col-xxl-12 col-md-12 form-check form-switch form-switch-success" style="{% if alert.alerts_type == 'user_sync' or alert.alerts_type == "bio_star_uptime_check" %} display: none;{% endif%}">
+                                                        <input class="form-check-input" type="checkbox" role="switch" id="is_not_send_to_users" name="is_not_send_to_users" {% if alert.is_not_send_to_users == True %}checked{% endif %}>
+                                                        <label class="form-check-label" for="is_not_send_to_users">Do not send notifications to Users</label>
+                                                        <span class="text-muted pt-2" style="display: block;">Enabling this will stop sending messages to users. If Admin WhatsApp Numbers or Additional WhatsApp Numbers are configured then they will still receive those messages. If any further assistance is required then <a href="https://blueerasoftech.com">Get In Touch</a></span>
+                                                    </div>
+
+                                                    <hr class="custom" />
+
+                                                    <div id="divIsSendToAdmin" class="col-xxl-12 col-md-12 form-check form-switch form-switch-success" style="{% if alert.alerts_type == 'user_sync' %} display: none;{% endif%}">
+                                                        <input class="form-check-input" type="checkbox" role="switch" id="isSendToAdmin" name="isSendToAdmin" {% if alert.is_send_to_admin == True %}checked{% endif %}>
+                                                        <label class="form-check-label" for="isSendToAdmin">Send notifications to Admin WhatsApp Numbers</label>
+                                                        <span class="text-muted pt-2" style="display: block;">Would you like to send all notifications send to each user to admin numbers configured <a href="{% url 'apps.main.settings:whatsapp-numbers-settings' %}">here</a>.</span>
+                                                    </div>
+
+                                                    <hr class="custom" />
+
+                                                    <div id="divAdditionalWhatsappNumbers" class="row" style="{% if alert.alerts_type == 'user_sync' %} display: none; {% endif %}">
+                                                        <div class="col-xxl-12 col-md-12">
+                                                            <label for="name" class="form-label">Additional WhatsApp Number(s)</label>
+                                                            <input type="text" class="form-control" name="additional_whatsapp_numbers" id="additional_whatsapp_numbers" value="{{ alert.additional_whatsapp_numbers|default:"" }}" placeholder="9876543210, 9876543211">
+                                                            <span class="text-muted pt-2" style="display: block;">Enter multiple mobile numbers with comma(,) seperated. Also input mobile numbers without 0 or +. Any number configured here would start receiving all the messages for this alert. If any further assistance is required then <a href="https://blueerasoftech.com">Get In Touch</a></span>
+                                                        </div>
+                                                    </div>
+                                                
+                                                    <hr class="custom" />
+        
+                                                    <div class="col-sm-auto mt-4">
+                                                        <div class="gap-1 flex-wrap">
+                                                            <button type="submit" class="btn btn-success add-btn" id="profile_submit_btn"><i class="ri-save-line align-bottom me-1"></i> Submit</button>
+                                                        </div>
+                                                        <div class="mt-3">
+                                                            <span class="submit_profile_form_status"></span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                
+                                </div>
+                                <!--end col-->
+                            </div>
+                        <!--end row-->
+ 
+                    </div>
+                    <!-- container-fluid -->
+                </div>
+                <!-- End Page-content -->
+
+            {% block footer %}
+            {% include "partials/footer.html" %}
+            {% endblock footer %}
+            </div>
+            <!-- end main content-->
+{% endblock content %}
+
+{% block extra_js %}
+
+<!-- list.js min js -->
+<script src="{% static 'select2/select2.js'%}"></script>
+
+<!-- list.js min js -->
+<!-- <script src="{% static 'libs/list.js/list.min.js'%}"></script> -->
+
+<!--list pagination js-->
+<!-- <script src="{% static 'libs/list.pagination.js/list.pagination.min.js'%}"></script> -->
+
+
+        <script>
+            var alertType = document.getElementById("alertType");
+            var alertTypeChoices = new Choices(alertType, {
+                searchEnabled: false,
+            });
+
+            
+            $("#alertType").change(function() {
+                var selectedAlert = $(this).val();
+                console.log("Selected Alert :: " + selectedAlert);
+                $('#div_shift_trigger_time').hide();
+                $('#div_realtime_trigger_time').show();
+                $('#div_cron_date_time').hide();
+                $('#div_birthday_greetings').hide();
+                $('#div_user_sync').hide();
+                $('#divDoorsDevicesId').show();
+                $('#divShiftsId').show();
+                $('#divUserGroupId').show();
+                $('#divIsSendToAdmin').show();
+                $('#div_time_sensitive_realtime').hide()
+                $('#divAdditionalWhatsappNumbers').show();
+                $('#divIsNotSendToUsers').show();
+                $('#divIsNotSendToUsersHr').show();
+                $("#divWhatsAppTemplate").show();
+                $('#divEventTypesId').hide()
+                if (selectedAlert === "announcement") {
+                    $('#div_shift_trigger_time').hide();
+                    $('#div_realtime_trigger_time').hide();
+                    $('#div_cron_date_time').show();
+                    $('#div_birthday_greetings').hide();
+                    $('#div_user_sync').hide();
+                }  else if (selectedAlert === "birthday_greetings") {
+                    $('#div_shift_trigger_time').hide();
+                    $('#div_realtime_trigger_time').hide();
+                    $('#div_cron_date_time').hide();
+                    $('#div_user_sync').hide();
+                    $('#div_birthday_greetings').show();
+                } else if (selectedAlert === "user_sync") {
+                    $('#div_shift_trigger_time').hide();
+                    $('#div_realtime_trigger_time').hide();
+                    $('#div_cron_date_time').hide();
+                    $('#div_birthday_greetings').hide();
+                    $("#divWhatsAppTemplate").hide();
+                    $("#divIsSendToAdmin").hide();
+                    $('#divIsNotSendToUsers').hide();
+                    $('#divIsNotSendToUsersHr').hide()
+                    $('#divAdditionalWhatsappNumbers').hide();
+                    $('#div_user_sync').show();
+                    $("#whatsappTemplate").prop('disabled', 'disabled');
+                }  else if (selectedAlert === "time_sensitive_realtime") {
+                    $('#div_cron_date_time').hide();
+                    $('#div_birthday_greetings').hide();
+                    $('#div_user_sync').hide();
+                    $('#div_time_sensitive_realtime').show();
+                    $('#div_shift_trigger_time').hide();
+                    $('#div_realtime_trigger_time').show();
+                } else if (selectedAlert === "qr_code_realtime") {
+                    $('#divDoorsDevicesId').hide();
+                    $('#divShiftsId').hide();
+                    $('#divUserGroupId').hide();
+                } else if (selectedAlert === "event_types") {
+                    $('#divDoorsDevicesId').show();
+                    $('#divShiftsId').show();
+                    $('#divUserGroupId').show();
+                    $('#divEventTypesId').show();
+                } else if (selectedAlert === "bio_star_uptime_check") {
+                    $('#divDoorsDevicesId').hide();
+                    $('#divShiftsId').hide();
+                    $('#divUserGroupId').hide();
+                    $('#divIsNotSendToUsers').hide();
+                    $('#divIsNotSendToUsersHr').hide()
+                } else if (selectedAlert == 'missing_in_punch' || selectedAlert == 'missing_out_punch' || selectedAlert == 'late_in' || selectedAlert == 'insufficient_work_hours' || selectedAlert == "absent" || selectedAlert == "present") {
+                    $('#div_cron_date_time').hide();
+                    $('#div_birthday_greetings').hide();
+                    $('#div_user_sync').hide();
+                    $('#div_time_sensitive_realtime').hide();
+                    $('#div_shift_trigger_time').show();
+                    $('#div_realtime_trigger_time').hide();
+                }
+
+                if (selectedAlert == "birthday_greetings" || selectedAlert == "announcement" || selectedAlert == "user_sync") {
+                    $("#shiftsList").prop('disabled', 'disabled');
+                    $("#shiftsList option:selected").remove();
+                }  else if (selectedAlert == "missing_in_punch" || selectedAlert == "missing_out_punch" || selectedAlert == "late_in" || selectedAlert == "insufficient_work_hours" || selectedAlert == "absent" || selectedAlert == "present") {
+                    $("#doorList").prop('disabled', 'disabled');
+                    $("#doorList option:selected").remove();
+                    $("#deviceList").prop('disabled', 'disabled');  
+                    $("#deviceList option:selected").remove();
+                } else {
+                    $("#doorList").prop('disabled', false);
+                    $("#deviceList").prop('disabled', false);
+                    $("#shiftsList").prop('disabled', false);
+                    $("#userGroupsList").prop('disabled', false);
+                    $("#departmentsList").prop('disabled', false);
+                }
+
+                if (selectedAlert === "birthday_greetings" || selectedAlert == "announcement" || selectedAlert == "user_sync" || selectedAlert == "qr_code_realtime" || selectedAlert == "bio_star_uptime_check") {
+                    $("#deviceList").prop('disabled', 'disabled');
+                    $("#deviceList option:selected").remove();
+                    $("#shiftsList").prop('disabled', 'disabled');
+                    $("#shiftsList option:selected").remove();
+                    $("#doorList").prop('disabled', 'disabled');
+                    $("#doorList option:selected").remove();
+                    $("#userGroupsList").prop('disabled', 'disabled');
+                    $("#userGroupsList option:selected").remove();
+                    $("#departmentsList").prop('disabled', 'disabled');
+                    $("#departmentsList option:selected").remove();
+                }
+
+            })
+
+            {% if alert.id > 0 %}
+                $('#alertType').trigger('change');
+            {% endif %}
+
+            var whatsappTemplate = document.getElementById("whatsappTemplate");
+            var whatsappTemplateChoices = new Choices(whatsappTemplate, {
+                searchEnabled: true,
+            });
+            
+
+
+             $('#deviceList').select2({
+                placeholder: "All",
+             });
+             $('#shiftsList').select2({
+                placeholder: "All",
+             });
+             $('#doorList').select2({
+                placeholder: "All",
+             });
+             $('#userGroupsList').select2({
+                placeholder: "All",
+             });
+             $('#departmentsList').select2({
+                placeholder: "All",
+             });
+             $('#selectDays').select2({
+                placeholder: "All Days"
+             });
+             $('#eventTypesList').select2({
+                placeholder: "All Event Types"
+             });
+           
+        </script>
+        
+
+{% endblock extra_js %}

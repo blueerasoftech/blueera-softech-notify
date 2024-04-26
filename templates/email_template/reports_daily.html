@@ -1,0 +1,158 @@
+{% extends "email_template/base.html" %}
+{% load static %}
+{% block title %}{{ notifications_data.subject }}{% endblock title %}
+{% block extra_css %}
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+<!-- Layout config Js -->
+<script src="/static/js/layout.js"></script>
+<style>
+
+    /* body {
+        font-family: 'Roboto', sans-serif;
+        font-size: 16px;
+        font-weight: 500;
+        margin: 0;
+        color: black;
+    }
+
+
+    .items td {
+        padding: 5px 5px;
+        line-height: 14px;
+    } */
+
+</style>
+{% endblock extra_css %}
+{% block content %}
+            
+            <div class="main-content">
+
+                <div class="page-content">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <!--end col-->
+                            <div class="col-12">
+                                <table class="body-wrap" style="font-family: 'Roboto', sans-serif; box-sizing: border-box; font-size: 14px; width: 100%; background-color: transparent; margin: 0;">
+                                    <tr style="font-family: 'Roboto', sans-serif; box-sizing: border-box; font-size: 14px; margin: 0;">
+                                        <td style="font-family: 'Roboto', sans-serif; box-sizing: border-box; font-size: 14px; vertical-align: top; margin: 0;" valign="top"></td>
+                                        <td class="container" width="600" style="font-family: 'Roboto', sans-serif; box-sizing: border-box; font-size: 14px; vertical-align: top; display: block !important; max-width: 600px !important; clear: both !important; margin: 0 auto;" valign="top">
+                                            <div class="content" style="font-family: 'Roboto', sans-serif; box-sizing: border-box; font-size: 14px; max-width: 600px; display: block; margin: 0 auto; padding: 20px;">
+                                                <table class="main" width="100%" cellpadding="0" cellspacing="0" itemprop="action" itemscope itemtype="http://schema.org/ConfirmAction" style="font-family: 'Roboto', sans-serif; box-sizing: border-box; font-size: 14px; border-radius: 3px; margin: 0; border: none;">
+                                                    <tr style="font-family: 'Roboto', sans-serif; font-size: 14px; margin: 0;">
+                                                        <td class="content-wrap" style="font-family: 'Roboto', sans-serif; box-sizing: border-box; color: #495057; font-size: 14px; vertical-align: top; margin: 0;padding: 30px; box-shadow: 0 3px 15px rgba(30,32,37,.06); ;border-radius: 7px; background-color: #fff;" valign="top">
+                                                            <meta itemprop="name" content="Confirm Email" style="font-family: 'Roboto', sans-serif; box-sizing: border-box; font-size: 14px; margin: 0;" />
+                                                            <table width="100%" cellpadding="0" cellspacing="0" style="font-family: 'Roboto', sans-serif; box-sizing: border-box; font-size: 14px; margin: 0;">
+                                                                
+                                                                {% include 'email_template/header.html' %}
+                                                                
+                                                                <tr style="font-family: 'Roboto', sans-serif; box-sizing: border-box; font-size: 14px; margin: 0;">
+                                                                    <td class="content-block" style="font-family: 'Roboto', sans-serif; box-sizing: border-box; font-size: 20px; line-height: 1.5; font-weight: 500; vertical-align: top; margin: 0; padding: 0 0 10px;" valign="top">
+                                                                        Dear User,
+                                                                    </td>
+                                                                </tr>
+                                                                <tr style="font-family: 'Roboto', sans-serif; box-sizing: border-box; font-size: 14px; margin: 0;">
+                                                                    <td class="content-block gray-color" style="font-family: 'Roboto', sans-serif; color: #878a99; box-sizing: border-box; line-height: 1.5; font-size: 15px; vertical-align: top; margin: 0; padding: 0 0 10px;" valign="top">
+                                                                        <span style="color: #405189">Subject: </span> {{ notifications_data.subject }}
+                                                                    </td>
+                                                                </tr>
+                                                                <tr style="font-family: 'Roboto', sans-serif; box-sizing: border-box; font-size: 14px; margin: 0;">
+                                                                    <td class="content-block gray-color" style="font-family: 'Roboto', sans-serif; color: #878a99; box-sizing: border-box; line-height: 1.5; font-size: 15px; vertical-align: top; margin: 0; padding: 0 0 10px;" valign="top">
+                                                                        We are pleased to provide you with a summary of today's WhatsApp Notifications for our Time & Attendance system, as well as an overview of the notifications for each alert configured in the system.
+                                                                    </td>
+                                                                </tr>
+                                                                
+
+
+                                                                <tr style="font-family: 'Roboto', sans-serif; box-sizing: border-box; font-size: 14px; margin: 0; ">
+                                                                    <td style="padding: 20px 0 0 0;" colspan="4">
+                                                                        <table style="margin: 0; border-collapse: collapse; width: 100%">
+                                                                          <tbody >
+                                                                            <tr  style="border-top: 1px dashed #878a99; color: #495057; font-size: 16.25px; font-weight: 500; font-family: 'Poppins', sans-serif; text-align: center; ">
+                                                                                <td  style="width: 50%;  border-right: 1px dashed #878a99; padding-top: 20px;">
+                                                                                    <span data-target="{{ notifications_data.total|default:0 }}">{{ notifications_data.total|default:0 }}</span>
+                                                                                </td>
+                                                                                <td  style="width: 50%; padding-top: 20px;">
+                                                                                    <span data-target="{{ notifications_data.total_unique|default:0 }}" >{{ notifications_data.total_unique|default:0 }}</span>
+                                                                                </td>
+                                                                            </tr>
+                                                                            <tr style="border-bottom: 1px dashed #878a99; color: #878a99; text-align: center; ">
+                                                                                <td style="width: 50%; border-right: 1px dashed #878a99; padding-bottom: 20px;">
+                                                                                    Messages
+                                                                                </td>
+                                                                                <td style="width: 50%; padding-bottom: 20px; "> 
+                                                                                    Conversations
+                                                                                </td>
+                                                                            </tr>  
+                                                                            <tr style="font-size: 16.25px; font-weight: 500; font-size: 16.25px; font-weight: 500; font-family: 'Poppins', sans-serif; text-align: center;">
+                                                                                <td style="width: 50%; border-right: 1px dashed #878a99; padding-top: 20px;">
+                                                                                    <span data-target=">{{ notifications_data.total_send|default:0 }}" style="color: #0ab39c;">{{ notifications_data.total_send|default:0 }}</span>
+                                                                                </td>
+                                                                                <td style="width: 50%; padding-top: 20px; ">
+                                                                                    <span data-target="{{ notifications_data.total_failed|default:0 }}" style="color: #f06548;" >{{ notifications_data.total_failed|default:0 }}</span>
+                                                                                </td>
+                                                                            </tr>
+                                                                            <tr  style="border-bottom: 1px dashed #878a99; color: #878a99; text-align: center;">
+                                                                                <td style="width: 50%;  border-right: 1px dashed #878a99; padding-bottom: 20px;">
+                                                                                    Send
+                                                                                </td>
+                                                                                <td style="width: 50%; padding-bottom: 20px;">
+                                                                                    Failed
+                                                                                </td>
+                                                                            </tr>
+                                                                            
+                                                                          </tbody>
+                                                                        </table>
+                                                                    </td>
+                                                                </tr>
+                                                                
+                                                                <tr style="font-family: 'Roboto', sans-serif; box-sizing: border-box; font-size: 14px; margin: 0; ">
+                                                                    <td style="padding: 20px 0 0 0;" colspan="4">
+                                                                        <table style="margin: 0; border-collapse: collapse; width: 100%; box-shadow: 0 1px 2px rgba(56, 65, 74, 0.15);">
+                                                                          <tbody >
+                                                                            <tr>
+                                                                                <td colspan="4" style="width: 100%; padding: 16px; font-size: 16px; font-family: 'Poppins', sans-serif; font-weight: 500; ">Overview</td>
+                                                                            </tr>
+                                                                            <tr style="font-size: 14px; color: #878a99; font-weight: 500; background-color: #f3f6f9; border-top: 1px solid #e9ebec; border-bottom: 1px solid #e9ebec;">
+                                                                                <td style="width: 55%; padding: 12px 9.6px 12px 16px;">Alerts</td>
+                                                                                <td style="width: 15%; padding: 12px 9.6px; text-align: center;">Send</td>
+                                                                                <td style="width: 15%; padding: 12px 9.6px; text-align: center;">Failed</td>
+                                                                                <td style="width: 15%; padding: 12px 16px 12px 9.6px; text-align: center;">Total</td>
+                                                                            </tr>
+
+                                                                            {% for alert in notifications_data.notifications_data %}
+                                                                                <tr style="font-size: 14px;">
+                                                                                    <td style="width: 55%; padding: 12px 9.6px 12px 16px;">
+                                                                                        <a href="javascript:void(0);">{{ alert.alert_type }}</a>
+                                                                                    </td>
+                                                                                    <td style="width: 15%; padding: 12px 9.6px; text-align: center;">{{ alert.send }}</td>
+                                                                                    <td style="width: 15%; padding: 12px 9.6px; text-align: center;">{{ alert.failed }}</td>
+                                                                                    <td style="width: 15%; padding: 12px 16px 12px 9.6px; text-align: center;">{{ alert.total }}</td>
+                                                                                </tr>
+                                                                            {% endfor %}
+                                                                          </tbody>
+                                                                        </table>
+                                                                    </td>
+                                                                </tr>
+                                                            </table>
+                                                        </td>
+                                                    </tr>
+                                                </table>
+                                                
+                                                {% include 'email_template/footer.html' %}
+
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </table>
+                                <!-- end table -->
+                            </div>
+                            <!--end col-->
+                        </div><!-- end row -->
+                    </div>
+                    <!-- container-fluid -->
+                </div>
+                <!-- End Page-content -->
+            </div>
+            <!-- end main content-->
+{% endblock content %}
+

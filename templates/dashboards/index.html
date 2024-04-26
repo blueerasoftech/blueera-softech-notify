@@ -1,0 +1,561 @@
+{% extends "partials/base.html" %}
+{% load static %}
+{% block title %}Dashboard{% endblock title %}
+{% block extra_css %}
+{% load tz %}
+    <!-- jsvectormap css -->
+    <link href="{% static 'libs/jsvectormap/css/jsvectormap.min.css'%}" rel="stylesheet" type="text/css" />
+
+    <!--Swiper slider css-->
+    <link href="{% static 'libs/swiper/swiper-bundle.min.css'%}" rel="stylesheet" type="text/css" />
+{% endblock extra_css %}
+
+{% block content %}
+        <!-- ============================================================== -->
+        <!-- Start right Content here -->
+        <!-- ============================================================== -->
+        <div class="main-content">
+
+            <div class="page-content">
+                <div class="container-fluid">
+                    {% block pagetitle %}
+                    {% endblock pagetitle %}
+
+                    {% block alerts %}
+                        {% include "partials/errors.html" with messages=messages %}
+                    {% endblock alerts %}
+
+                    <div class="row">
+                        <div class="col">
+
+                            <div class="h-100">
+                                <div class="row mb-3 pb-1">
+                                    <div class="col-12">
+                                        <div class="d-flex align-items-lg-center flex-lg-row flex-column">
+                                            <div class="flex-grow-1">
+                                                {% now "H" as current_time %}
+                                                <h4 class="fs-16 mb-1">Good {% if current_time|add:0 < 12 %}Morning{% elif current_time|add:0 < 17 %}Afternoon{% else %}Evening{% endif %}, {{user.first_name|capfirst }}!</h4>
+                                                <p class="text-muted mb-0">Here's your Dashboard.</p>
+                                            </div>
+                                            
+                                        </div><!-- end card header -->
+                                    </div>
+                                    <!--end col-->
+                                </div>
+                                <!--end row-->
+
+
+                                <div class="row">
+                                    {% if license_valid_for_days is not None and license_valid_for_days <= 60 %}
+                                        <div class="col-12">
+                                            <div class="card">
+                                                <div class="card-body p-0">
+                                                    <div class="alert {% if license_valid_for_days <= 0 %} alert-danger {% else %} alert-warning {% endif %} border-0 rounded-0 m-0 d-flex align-items-center" role="alert">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-alert-triangle {% if license_valid_for_days <= 0 %} text-danger {% else %} text-warning {% endif %}  me-2 icon-sm"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+                                                        <div class="flex-grow-1 text-truncate">
+                                                            {% if license_valid_for_days <= 0 %} Your license expired on <b>{{ valid_till_date_str }}</b>. {% else %} Your license will get expired in <b>{{ valid_till_date_str }}</b>. {% endif %}
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="row align-items-end">
+                                                        <div class="col-sm-12">
+                                                            <div class="p-3">
+                                                                {% if license_valid_for_days <= 0 %}
+                                                                    <p class="fs-16 lh-base">
+                                                                        License Expired on <span class="fw-semibold"> {{ valid_till_date_str }} </span>. Renew license or else system will stop sending notifications. If already renewed then kindly <a href="{% url 'apps.main.settings:license-settings' %}">Refresh License here</a> <i class="mdi mdi-arrow-right"></i>
+                                                                    </p>
+                                                                {% else %}
+                                                                    <p class="fs-16 lh-base">
+                                                                        Your license will get expired on <span class="fw-semibold"> {{ valid_till_date_str }} </span>. If you do not renew then it will stop sending messages. If already renewed then kindly <a href="{% url 'apps.main.settings:license-settings' %}">Refresh License here</a> <i class="mdi mdi-arrow-right"></i>
+                                                                    </p>
+                                                                {% endif %}
+
+                                                                <div class="mt-3">
+                                                                    <a href="https://blueerasoftech.com" class="btn btn-success">Renew Now!</a>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div> <!-- end card-body-->
+                                            </div>
+                                        </div>
+                                    {% endif %}
+
+
+                                    {% comment %} Company Profile {% endcomment %}
+                                    {% if configData.is_company_profile_completed == False %}
+                                        <div class="col-4">
+                                            <div class="card">
+                                                <div class="card-body p-0">
+                                                    <div class="alert alert-warning bes-custom border-0 rounded-0 m-0 d-flex align-items-center" role="alert">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-alert-triangle text-warning me-2 icon-sm"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+                                                        <div class="flex-grow-1 text-truncate">
+                                                            Company Profile!
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="row align-items-end">
+                                                        <div class="col-sm-12">
+                                                            <div class="p-3">
+                                                                <p class="fs-16 lh-base">You need to add <span class="fw-semibold">Company Profile</span> to <span class="fw-semibold">Get Started</span></p>
+                                                                <div class="mt-3">
+                                                                    <a href="{% url 'apps.main.settings:company-profile' %}" class="btn btn-success">Proceed! <i class="mdi mdi-arrow-right"></i></a>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div> <!-- end card-body-->
+                                            </div>
+                                        </div>
+                                    {% endif %}
+
+
+                                    {% comment %} WhatsApp Config {% endcomment %}
+                                    {% if configData.is_whatsapp_completed == False %}
+                                        <div class="col-4">
+                                            <div class="card">
+                                                <div class="card-body p-0">
+                                                    <div class="alert alert-warning bes-custom border-0 rounded-0 m-0 d-flex align-items-center" role="alert">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-alert-triangle text-warning me-2 icon-sm"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+                                                        <div class="flex-grow-1 text-truncate">
+                                                            WhatsApp Configuration!
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="row align-items-end">
+                                                        <div class="col-sm-12">
+                                                            <div class="p-3">
+                                                                <p class="fs-16 lh-base">You need to setup <span class="fw-semibold">WhatsApp Config</span> to <span class="fw-semibold">Get Started</span></p>
+                                                                <div class="mt-3">
+                                                                    <a href="{% url 'apps.main.settings:whatsapp-settings' %}" class="btn btn-success">Proceed! <i class="mdi mdi-arrow-right"></i></a>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div> <!-- end card-body-->
+                                            </div>
+                                        </div>
+                                    {% endif %}
+
+
+
+                                    {% comment %} Users Enable {% endcomment %}
+                                    {% if configData.is_user_activated == False %}
+                                        <div class="col-4">
+                                            <div class="card">
+                                                <div class="card-body p-0">
+                                                    <div class="alert alert-warning bes-custom border-0 rounded-0 m-0 d-flex align-items-center" role="alert">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-alert-triangle text-warning me-2 icon-sm"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+                                                        <div class="flex-grow-1 text-truncate">
+                                                            Activate Users!
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="row align-items-end">
+                                                        <div class="col-sm-12">
+                                                            <div class="p-3">
+                                                                <p class="fs-16 lh-base">You need to <span class="fw-semibold">Enable Users</span> to whom you would like to send <span class="fw-semibold"> Notifications</span></p>
+                                                                <div class="mt-3">
+                                                                    <a href="{% url 'apps.main.users:users-list' %}" class="btn btn-success">Proceed! <i class="mdi mdi-arrow-right"></i></a>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div> <!-- end card-body-->
+                                            </div>
+                                        </div>
+                                    {% endif %}
+
+
+
+                                    {% comment %} T&A Alerts {% endcomment %}
+                                    {% if configData.is_tna_alerts_added == False %}
+                                        {% if configData.is_company_profile_completed == True or configData.is_whatsapp_completed == True or configData.is_user_activated == True %}
+                                            <div class="col-4">
+                                                <div class="card">
+                                                    <div class="card-body p-0">
+                                                        <div class="alert alert-warning bes-custom border-0 rounded-0 m-0 d-flex align-items-center" role="alert">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-alert-triangle text-warning me-2 icon-sm"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+                                                            <div class="flex-grow-1 text-truncate">
+                                                                T&A Alerts!
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="row align-items-end">
+                                                            <div class="col-sm-12">
+                                                                <div class="p-3">
+                                                                    <p class="fs-16 lh-base">You need to configure <span class="fw-semibold"> T&A Alerts</span> to send notifications</p>
+                                                                    <div class="mt-3">
+                                                                        <a href="{% url 'apps.main.settings:alerts' %}" class="btn btn-success">Proceed! <i class="mdi mdi-arrow-right"></i></a>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div> <!-- end card-body-->
+                                                </div>
+                                            </div>
+                                        {% endif %}
+                                    {% endif %}
+                                </div>
+
+
+
+
+
+                                <div class="row">
+                                    <div class="col-4">
+                                        <!-- card -->
+                                        <div class="card card-animate">
+                                            <div class="card-body">
+                                                <div class="d-flex align-items-center">
+                                                    <div class="flex-grow-1 overflow-hidden">
+                                                        <p class="text-uppercase fw-medium text-muted text-truncate mb-0">Today</p>
+                                                    </div>
+                                                    
+                                                </div>
+                                                <div class="d-flex align-items-end justify-content-between mt-4">
+                                                    <div>
+                                                        <h4 class="fs-22 fw-semibold ff-secondary mb-4"><span
+                                                                class="counter-value" data-target="{{ records_today|default:'0' }}">0</span></h4>
+                                                        <p class="">Messages sent today</p>
+                                                    </div>
+                                                    <div class="avatar-sm flex-shrink-0">
+                                                        <span class="avatar-title bg-soft-success rounded fs-3">
+                                                            <i class="ri-whatsapp-line text-success"></i>
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div><!-- end card body -->
+                                        </div><!-- end card -->
+                                    </div><!-- end col -->
+
+                                    <div class="col-4">
+                                        <!-- card -->
+                                        <div class="card card-animate">
+                                            <div class="card-body">
+                                                <div class="d-flex align-items-center">
+                                                    <div class="flex-grow-1 overflow-hidden">
+                                                        <p class="text-uppercase fw-medium text-muted text-truncate mb-0">Last Week
+                                                        </p>
+                                                    </div>
+                                                    
+                                                </div>
+                                                <div class="d-flex align-items-end justify-content-between mt-4">
+                                                    <div>
+                                                        <h4 class="fs-22 fw-semibold ff-secondary mb-4"><span
+                                                                class="counter-value" data-target="{{ records_last_week|default:'0' }}">0</span></h4>
+                                                                <p class="">Messages sent in last 7 days</p>
+                                                    </div>
+                                                    <div class="avatar-sm flex-shrink-0">
+                                                        <span class="avatar-title bg-soft-success rounded fs-3">
+                                                            <i class="ri-whatsapp-line text-success"></i>
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div><!-- end card body -->
+                                        </div><!-- end card -->
+                                    </div><!-- end col -->
+
+                                    <div class="col-4">
+                                        <!-- card -->
+                                        <div class="card card-animate">
+                                            <div class="card-body">
+                                                <div class="d-flex align-items-center">
+                                                    <div class="flex-grow-1 overflow-hidden">
+                                                        <p class="text-uppercase fw-medium text-muted text-truncate mb-0">
+                                                            Last Month</p>
+                                                    </div>
+                                                    
+                                                </div>
+                                                <div class="d-flex align-items-end justify-content-between mt-4">
+                                                    <div>
+                                                        <h4 class="fs-22 fw-semibold ff-secondary mb-4"><span
+                                                                class="counter-value" data-target="{{ records_last_month|default:'0' }}">0</span></h4>
+                                                                <p class="">Messages sent in last 30 days</p>
+                                                    </div>
+                                                    <div class="avatar-sm flex-shrink-0">
+                                                        <span class="avatar-title bg-soft-success rounded fs-3">
+                                                            <i class="ri-whatsapp-line text-success"></i>
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div><!-- end card body -->
+                                        </div><!-- end card -->
+                                    </div><!-- end col -->
+
+                                   
+                                </div> <!-- end row-->
+
+                                <div class="row">
+                                    <div class="col-12">
+                                        <div class="card">
+                                            <div class="card-header border-0 align-items-center d-flex">
+                                                <h4 class="card-title mb-0 flex-grow-1">Messages</h4>
+                                                <div style="display:none;">
+                                                    <button type="button" class="btn btn-soft-secondary btn-sm">
+                                                        ALL
+                                                    </button>
+                                                    <button type="button" class="btn btn-soft-secondary btn-sm">
+                                                        1M
+                                                    </button>
+                                                    <button type="button" class="btn btn-soft-secondary btn-sm">
+                                                        6M
+                                                    </button>
+                                                    <button type="button" class="btn btn-soft-primary btn-sm">
+                                                        1Y
+                                                    </button>
+                                                </div>
+                                            </div><!-- end card header -->
+
+                                            <div class="card-header p-0 border-0 bg-soft-light">
+                                                <div class="row g-0 text-center">
+                                                    <div class="col-4 col-sm-4">
+                                                        <div class="p-3 border border-dashed border-start-0">
+                                                            <h5 class="mb-1"><span class="counter-value"
+                                                                    data-target="{{ total_msg_send_this_year }}">0</span></h5>
+                                                            <p class="text-muted mb-0">Sent</p>
+                                                        </div>
+                                                    </div>
+                                                    <!--end col-->
+                                                    <div class="col-4 col-sm-4">
+                                                        <div class="p-3 border border-dashed border-start-0">
+                                                            <h5 class="mb-1"><span class="counter-value"
+                                                                    data-target="{{ total_msg_delivered_this_year }}">0</span></h5>
+                                                            <p class="text-muted mb-0">Delivered</p>
+                                                        </div>
+                                                    </div>
+                                                    <!--end col-->
+                                                    <div class="col-4 col-sm-4">
+                                                        <div class="p-3 border border-dashed border-start-0">
+                                                            <h5 class="mb-1"><span class="counter-value"
+                                                                    data-target="{{ total_msg_failed_this_year }}">0</span></h5>
+                                                            <p class="text-muted mb-0">Failed</p>
+                                                        </div>
+                                                    </div>
+                                                    {% comment %} <!--end col-->
+                                                    <div class="col-6 col-sm-3">
+                                                        <div class="p-3 border border-dashed border-start-0 border-end-0">
+                                                            <h5 class="mb-1 text-success"><span class="counter-value"
+                                                                    data-target="{{ success_ratio }}">0</span>%</h5>
+                                                            <p class="text-muted mb-0">Success Ratio</p>
+                                                        </div>
+                                                    </div>
+                                                    <!--end col--> {% endcomment %}
+                                                </div>
+                                            </div><!-- end card header -->
+
+                                            <div class="card-body p-0 pb-2">
+                                                <div class="w-100">
+                                                    <div id="customer_impression_charts"
+                                                        data-colors='["--vz-success", "--vz-primary", "--vz-danger"]'
+                                                        class="apex-charts" dir="ltr"></div>
+                                                </div>
+                                            </div><!-- end card body -->
+                                        </div><!-- end card -->
+                                    </div><!-- end col -->
+                                </div> <!-- end row-->
+
+
+                                <div class="row">
+                                    <div class="col-4">
+                                        <!-- card -->
+                                        <div class="card card-animate">
+                                            <div class="card-body">
+                                                <div class="d-flex align-items-center">
+                                                    <div class="flex-grow-1 overflow-hidden">
+                                                        <p class="text-uppercase fw-medium text-muted text-truncate mb-0">Total Licenses</p>
+                                                    </div>
+                                                    
+                                                </div>
+                                                <div class="d-flex align-items-end justify-content-between mt-4">
+                                                    <div>
+                                                        <h4 class="fs-22 fw-semibold ff-secondary mb-4"><span
+                                                                class="counter">{{ total_license|default:'Unlimted' }}</span></h4>
+                                                        <p class="">Total User Licenses Available in System</p>
+                                                    </div>
+                                                    <div class="avatar-sm flex-shrink-0">
+                                                        <span class="avatar-title bg-soft-secondary rounded fs-3">
+                                                            <i class="ri-group-line text-secondary"></i>
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div><!-- end card body -->
+                                        </div><!-- end card -->
+                                    </div><!-- end col -->
+
+                                    <div class="col-4">
+                                        <!-- card -->
+                                        <div class="card card-animate">
+                                            <div class="card-body">
+                                                <div class="d-flex align-items-center">
+                                                    <div class="flex-grow-1 overflow-hidden">
+                                                        <p class="text-uppercase fw-medium text-muted text-truncate mb-0">Licenses Used
+                                                        </p>
+                                                    </div>
+                                                    
+                                                </div>
+                                                <div class="d-flex align-items-end justify-content-between mt-4">
+                                                    <div>
+                                                        <h4 class="fs-22 fw-semibold ff-secondary mb-4"><span
+                                                                class="counter">{{ license_used|default:'NA' }}</span></h4>
+                                                                <p class="">Licenses Enabled for Users</p>
+                                                    </div>
+                                                    <div class="avatar-sm flex-shrink-0">
+                                                        <span class="avatar-title bg-soft-success rounded fs-3">
+                                                            <i class="ri-group-line text-success"></i>
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div><!-- end card body -->
+                                        </div><!-- end card -->
+                                    </div><!-- end col -->
+
+                                    <div class="col-4">
+                                        <!-- card -->
+                                        <div class="card card-animate">
+                                            <div class="card-body">
+                                                <div class="d-flex align-items-center">
+                                                    <div class="flex-grow-1 overflow-hidden">
+                                                        <p class="text-uppercase fw-medium text-muted text-truncate mb-0">
+                                                            Licenses Remaining </p>
+                                                    </div>
+                                                    
+                                                </div>
+                                                <div class="d-flex align-items-end justify-content-between mt-4">
+                                                    <div>
+                                                        <h4 class="fs-22 fw-semibold ff-secondary mb-4"><span
+                                                                class="counter">{{ license_reminaing|default:'NA' }}</span></h4>
+                                                                <p class="">Licenses Available for Future Use</p>
+                                                    </div>
+                                                    <div class="avatar-sm flex-shrink-0">
+                                                        <span class="avatar-title bg-soft-danger rounded fs-3">
+                                                            <i class="ri-group-line text-danger"></i>
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div><!-- end card body -->
+                                        </div><!-- end card -->
+                                    </div><!-- end col -->
+
+                                   
+                                </div> <!-- end row-->
+
+                            </div> <!-- end .h-100-->
+
+                        </div> <!-- end col -->
+
+                    
+                    </div>
+
+                </div>
+                <!-- container-fluid -->
+            </div>
+            <!-- End Page-content -->
+            {% block footer %}
+            {% include "partials/footer.html" %}
+            {% endblock footer %}
+        </div>
+        <!-- end main content-->
+{% endblock content %}
+
+{% block extra_js %}
+<!-- apexcharts -->
+<script src="{% static 'libs/apexcharts/apexcharts.min.js'%}"></script>
+
+<!--Swiper slider js-->
+<script src="{% static 'libs/swiper/swiper-bundle.min.js'%}"></script> 
+
+<!-- Dashboard init -->
+<script>
+    function getChartColorsArray(e) {
+        if (null !== document.getElementById(e)) {
+            var t = document.getElementById(e).getAttribute("data-colors");
+            if (t)
+                return (t = JSON.parse(t)).map(function (e) {
+                    var t = e.replace(" ", "");
+                    return -1 === t.indexOf(",")
+                        ? getComputedStyle(document.documentElement).getPropertyValue(t) || t
+                        : 2 == (e = e.split(",")).length
+                        ? "rgba(" + getComputedStyle(document.documentElement).getPropertyValue(e[0]) + "," + e[1] + ")"
+                        : t;
+                });
+            console.warn("data-colors atributes not found on", e);
+        }
+    }
+    var options,
+        chart,
+        linechartcustomerColors = getChartColorsArray("customer_impression_charts"),
+        chartDonutBasicColors =
+            (linechartcustomerColors &&
+                ((options = {
+                    series: [
+                        { name: "Delivered", type: "area", data: {{ records_monthly_delivered }} },
+                        { name: "Sent", type: "bar", data: {{ records_monthly_send }} },
+                        { name: "Failed", type: "line", data: {{ records_monthly_failed }} },
+                    ],
+                    chart: { height: 370, type: "line", toolbar: { show: !1 } },
+                    stroke: { curve: "straight", dashArray: [0, 0, 8], width: [2, 0, 2.2] },
+                    fill: { opacity: [0.1, 0.9, 1] },
+                    markers: { size: [0, 0, 0], strokeWidth: 2, hover: { size: 4 } },
+                    xaxis: { categories: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"], axisTicks: { show: !1 }, axisBorder: { show: !1 } },
+                    grid: { show: !0, xaxis: { lines: { show: !0 } }, yaxis: { lines: { show: !1 } }, padding: { top: 0, right: -2, bottom: 15, left: 10 } },
+                    legend: { show: !0, horizontalAlign: "center", offsetX: 0, offsetY: -5, markers: { width: 9, height: 9, radius: 6 }, itemMargin: { horizontal: 10, vertical: 0 } },
+                    plotOptions: { bar: { columnWidth: "30%", barHeight: "70%" } },
+                    colors: linechartcustomerColors,
+                    tooltip: {
+                        shared: !0,
+                        y: [
+                            {
+                                formatter: function (e) {
+                                    return void 0 !== e ? e.toFixed(0) : e;
+                                },
+                            },
+                            {
+                                formatter: function (e) {
+                                    return void 0 !== e ? e.toFixed(0) : e;
+                                },
+                            },
+                            {
+                                formatter: function (e) {
+                                    return void 0 !== e ? e.toFixed(0) : e;
+                                },
+                            },
+                        ],
+                    },
+                }),
+                (chart = new ApexCharts(document.querySelector("#customer_impression_charts"), options)).render()),
+            getChartColorsArray("store-visits-source")),
+
+
+  
+        swiper = new Swiper(".vertical-swiper", { slidesPerView: 2, spaceBetween: 10, mousewheel: !0, loop: !0, direction: "vertical", autoplay: { delay: 2500, disableOnInteraction: !1 } }),
+        layoutRightSideBtn = document.querySelector(".layout-rightside-btn");
+    layoutRightSideBtn &&
+        (Array.from(document.querySelectorAll(".layout-rightside-btn")).forEach(function (e) {
+            var t = document.querySelector(".layout-rightside-col");
+            e.addEventListener("click", function () {
+                t.classList.contains("d-block") ? (t.classList.remove("d-block"), t.classList.add("d-none")) : (t.classList.remove("d-none"), t.classList.add("d-block"));
+            });
+        }),
+        window.addEventListener("resize", function () {
+            var e = document.querySelector(".layout-rightside-col");
+            e &&
+                Array.from(document.querySelectorAll(".layout-rightside-btn")).forEach(function () {
+                    window.outerWidth < 1699 || 3440 < window.outerWidth ? e.classList.remove("d-block") : 1699 < window.outerWidth && e.classList.add("d-block");
+                }),
+                "semibox" == document.documentElement.getAttribute("data-layout") && (e.classList.remove("d-block"), e.classList.add("d-none"));
+        }),
+        (overlay = document.querySelector(".overlay"))) &&
+        document.querySelector(".overlay").addEventListener("click", function () {
+            1 == document.querySelector(".layout-rightside-col").classList.contains("d-block") && document.querySelector(".layout-rightside-col").classList.remove("d-block");
+        }),
+        window.addEventListener("load", function () {
+            var e = document.querySelector(".layout-rightside-col");
+            e &&
+                Array.from(document.querySelectorAll(".layout-rightside-btn")).forEach(function () {
+                    window.outerWidth < 1699 || 3440 < window.outerWidth ? e.classList.remove("d-block") : 1699 < window.outerWidth && e.classList.add("d-block");
+                }),
+                "semibox" == document.documentElement.getAttribute("data-layout") && 1699 < window.outerWidth && (e.classList.remove("d-block"), e.classList.add("d-none"));
+        });
+    </script>
+{% endblock extra_js %}

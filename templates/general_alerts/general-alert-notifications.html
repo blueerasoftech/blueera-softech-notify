@@ -1,0 +1,211 @@
+{% extends "partials/base.html" %}
+{% load static %}
+{% block title %}General Alerts - Notifications{% endblock title %}
+{% block extra_css %}
+<!--datatable css-->
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+
+{% endblock extra_css %}
+{% block content %}
+            <!-- ============================================================== -->
+            <!-- Start right Content here -->
+            <!-- ============================================================== -->
+            <div class="main-content">
+
+                <div class="page-content">
+                    <div class="container-fluid">
+
+                        {% block pagetitle %}
+                        {% include "partials/page-title.html" with pagetitle="General Alerts" title="Notifications" %}
+                        {% endblock pagetitle %}
+
+                        {% block alerts %}
+                            {% include "partials/errors.html" with messages=messages %}
+                        {% endblock alerts %}
+    
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <div class="card" id="orderList">
+                                    <div class="card-header border-1">
+                                        <div class="row align-items-center gy-3">
+                                            <div class="col-sm">
+                                                <h5 class="card-title mb-0">Notifications List</h5>
+                                            </div>
+                                            
+                                        </div>
+                                    </div>
+                                    <div class="card-body border border-0 border-end-0 border-start-0">
+                                        <form>
+                                            <div class="row g-3">
+                                                <div class="col-8">
+                                                    <div class="search-box">
+                                                        <input type="text" id="searchBox" class="form-control search"
+                                                            placeholder="Search for notification ID, status, date, template or something...">
+                                                        <i class="ri-search-line search-icon"></i>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <!--end row-->
+                                        </form>
+                                    </div>
+    
+                                    <div class="card-body">
+                                        <div>
+                                            <div class="table-responsive table-card mb-1">
+                                                <table class="table table-nowrap align-middle bes-datatable" id="alertTable">
+                                                    <thead class="text-muted table-light">
+                                                        <tr class="text-uppercase">
+                                                            <th class="text-center">SR NO</th>
+                                                            <th class="text-center">Name</th>
+                                                            <th class="text-center">Alert Type</th>
+                                                            <th class="text-center">Phone Number</th>
+                                                            <th class="text-center">WhatsApp Template</th>
+                                                            <th class="text-center">Trigger Time</th>
+                                                            <th class="text-center">Send On</th>
+                                                            <th class="text-center">Status</th>
+                                                            <th class="text-center">Action</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody class="list form-check-all">
+                                                        {% for ga_notification in ga_notifications %}
+                                                            <tr>
+                                                                <td class="text-center">{{ forloop.counter }}</td>
+                                                                <td class="text-center">{{ ga_notification.ga_alert_name }}</td>
+                                                                <td class="text-center">{{ ga_alert.alerts_type }}</td>
+                                                                <td class="text-center">{{ ga_notification.mobile }}</td>
+                                                                <td class="text-center">{{ ga_notification.whatsapp_template.name }}</td>
+                                                                <td class="text-center">{{ ga_notification.cron_date_time|date:'d-m-Y h:i A' }}</td>
+                                                                <td class="text-center">{{ ga_notification.created_at|date:'d-m-Y h:i A' }}</td>
+                                                                <td class="text-center">
+                                                                    {% if ga_notification.whatsapp_msg_status == 'pending' %}
+                                                                        <span class="badge badge-soft-warning text-uppercase">Pending</span>
+                                                                    {% elif ga_notification.whatsapp_msg_status == 'send' or ga_notification.whatsapp_msg_status == 'system_send' %}
+                                                                        <span class="badge badge-soft-secondary text-uppercase">Send</span>
+                                                                    {% elif ga_notification.whatsapp_msg_status == 'failed' %}
+                                                                        <span class="badge badge-soft-danger text-uppercase">Failed</span>
+                                                                    {% elif ga_notification.whatsapp_msg_status == 'delivered' %}
+                                                                        <span class="badge badge-soft-info text-uppercase">Delivered</span>
+                                                                    {% elif ga_notification.whatsapp_msg_status == 'read' %}
+                                                                        <span class="badge badge-soft-success text-uppercase">Read</span>
+                                                                    {% else %}
+                                                                        <span class="badge badge-soft-secondary text-uppercase">Send</span>
+                                                                    {% endif %}
+                                                                </td>
+                                                                <td class="text-center">
+                                                                    <ul class="list-inline hstack gap-2 mb-0">
+                                                                        <li class="list-inline-item edit m-auto" data-bs-toggle="tooltip"
+                                                                            data-bs-trigger="hover" data-bs-placement="top"
+                                                                            title="Edit">
+                                                                            <a href="{% url 'apps.main.general_alerts:general-alert-detail-notification-detail' ga_notification_id=ga_notification.id %}"
+                                                                                class="text-primary d-inline-block edit-item-btn">
+                                                                                <i class="ri-eye-fill fs-16"></i>
+                                                                            </a>
+                                                                        </li>
+                                                                    </ul>
+                                                                </td>
+                                                            </tr>
+                                                        {% endfor %}
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                            
+                                        </div>
+                                    
+                                    </div>
+                                </div>
+            
+                            </div>
+                            <!--end col-->
+                        </div>
+                        <!--end row-->            
+                        
+                    </div>
+                    <!-- container-fluid -->
+                </div>
+                <!-- End Page-content -->
+
+            {% block footer %}
+            {% include "partials/footer.html" %}
+            {% endblock footer %}
+            </div>
+            <!-- end main content-->
+{% endblock content %}
+
+{% block extra_js %}
+<!-- list.js min js -->
+{% comment %} <script src="{% static 'libs/list.js/list.min.js'%}"></script> {% endcomment %}
+
+<!--list pagination js-->
+{% comment %} <script src="{% static 'libs/list.pagination.js/list.pagination.min.js'%}"></script> {% endcomment %}
+
+<!--datatable js-->
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+
+<script>
+    $(document).ready(function () {
+
+    var oTable = $('#alertTable').on( 'error.dt', function ( e, settings, techNote, message ) {
+        console.log( 'An error has been reported by DataTables: ', message );
+        $(".noresultContainer").show();
+    }).dataTable({
+        "ordering": false,
+        "searching": true,
+        "info": true,
+        "paging": true,
+        "dom": '<"top">rt<"bottom"lpi><"clear">',
+        "columns": [
+                    { 
+                        createdCell: function (td, cellData, rowData, row, col) {
+                            $(td).css('text-align', 'center');
+                        }
+                    },
+                    {},
+                    {
+                        createdCell: function (td, cellData, rowData, row, col) {
+                            $(td).css('text-align', 'center');
+                        }
+                    },
+                    {
+                        createdCell: function (td, cellData, rowData, row, col) {
+                            $(td).css('text-align', 'center');
+                        }
+                    },
+                    {
+                        createdCell: function (td, cellData, rowData, row, col) {
+                            $(td).css('text-align', 'center');
+                        }
+                    },
+                    {
+                        createdCell: function (td, cellData, rowData, row, col) {
+                            $(td).css('text-align', 'center');
+                        }
+                    },
+                    {
+                        createdCell: function (td, cellData, rowData, row, col) {
+                            $(td).css('text-align', 'center');
+                        }
+                    },
+                    {
+                        createdCell: function (td, cellData, rowData, row, col) {
+                            $(td).css('text-align', 'center');
+                        }
+                    },
+                    {
+                        createdCell: function (td, cellData, rowData, row, col) {
+                            $(td).css('text-align', 'center');
+                        }
+                    }
+                ],
+    });
+
+        $("#searchBox").on('keyup', function (){
+            oTable.fnFilter(this.value);
+        });
+        // Apply Select2 to the child select element
+        var tableLengthDropdown = document.querySelector('.dataTables_length select');
+        new Choices(tableLengthDropdown,{ searchEnabled: false });
+
+    });
+</script>
+
+{% endblock extra_js %}

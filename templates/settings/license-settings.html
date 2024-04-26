@@ -1,0 +1,151 @@
+{% extends "partials/base.html" %}
+{% load static %}
+{% block title %}License Activation{% endblock title %}
+{% block extra_css %}
+{% endblock extra_css %}
+{% block content %}
+            <!-- ============================================================== -->
+            <!-- Start right Content here -->
+            <!-- ============================================================== -->
+            <div class="main-content">
+
+                <div class="page-content">
+                    <div class="container-fluid">
+
+                        {% block pagetitle %}
+                        {% include "partials/page-title.html" with pagetitle="Settings" title="License Activation" %}
+                        {% endblock pagetitle %}
+
+                        {% block alerts %}
+                            {% include "partials/errors.html" with messages=messages %}
+                        {% endblock alerts %}
+    
+                        <div class="row">
+                            <div class="col-xl-9">
+
+                                <div class="card" id="integration_card">
+                                    <div class="card-header border-1">
+                                        <div class="row align-items-center gy-3">
+                                            <div class="col-sm">
+                                                <h5 class="card-title mb-0">Integrated with: 
+                                                    <span style="color:#a12642;">
+                                                        {% if configData.device_brand_type == 'Suprema' or configData.device_brand_type == 'suprema' %}
+                                                            Suprema BioStar
+                                                        {% elif configData.device_brand_type == 'Suprema' %}
+                                                            Suprema
+                                                        {% else %}
+                                                            -
+                                                        {% endif %}
+                                                    </span>
+                                                </h5>
+                                            </div>
+                                            <div class="col-sm-auto">
+                                                <div class="d-flex gap-1 flex-wrap">
+                                                    <a type="button" class="btn btn-success add-btn" id="create-alert-btn" href="{% url 'apps.main.settings:license-settings-refresh' %}"><i class="ri-refresh-line align-bottom me-1"></i> Refresh License</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                                <div class="card" id="license_card">
+                                    <div class="card-header border-1">
+                                        <div class="row align-items-center gy-3">
+                                            <div class="col-sm">
+                                                <h5 class="card-title mb-0">Activated License Key :</h5>
+                                            </div>
+                                            <div>
+                                                <input type="text" class="form-control" id="existingLicenseKey" value="{{ configData.license_key}}" disabled>
+                                            </div>
+                                        </div>
+
+                                        <div class="row align-items-center mt-3 gy-3">
+                                            <div class="col-auto">
+                                                <h5>License Type :</h5>
+                                            </div>
+                                            <div class="col-auto">
+                                                <div>
+                                                    <h5 style="color:#a12642;">One-Time</h5>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        {% if number_of_users and number_of_users is not None and number_of_users != "0" %}
+                                            <div class="row align-items-center mt-3 gy-3">
+                                                <div class="col-auto">
+                                                    <h5>Number of Users :</h5>
+                                                </div>
+                                                <div class="col-auto">
+                                                    <div>
+                                                        <h5 style="color:#a12642;">{{ number_of_users|default:'-' }} Users</h5>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        {% endif %}
+
+
+                                        {% if number_of_whatsapp_messages and number_of_whatsapp_messages is not None and number_of_whatsapp_messages != "0" %}
+                                            <div class="row align-items-center mt-3 gy-3">
+                                                <div class="col-auto">
+                                                    <h5>Number of WhatsApp Messages :</h5>
+                                                </div>
+                                                <div class="col-auto">
+                                                    <div>
+                                                        <h5 style="color:#a12642;">{{ number_of_whatsapp_messages|default:'-' }} /month</h5>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        {% endif %}
+
+                                        {% if valid_till_date_formatted and valid_till_date_formatted is not None %}
+                                            <div class="row align-items-center mt-3 gy-3">
+                                                <div class="col-auto">
+                                                    <h5>Next Renewal Date :</h5>
+                                                </div>
+                                                <div class="col-auto">
+                                                    <div>
+                                                        <h5 style="color:#a12642;">{{ valid_till_date_formatted|default:'-' }}</h5>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        {% endif %}
+
+                                        <div class="row align-items-center gy-3 mt-3" style="border-top:1px solid #e9ebec;">
+                                            <br>
+                                            <div class="row align-items-center mt-0 gy-3">
+                                                <div class="col-auto">
+                                                    <h5>Activate new license?</h5>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-auto mt-3">
+                                                <div class="gap-1 flex-wrap">
+                                                    <a type="button" href="{% url 'apps.main.settings:license-settings-activate-new' %}" class="btn btn-success add-btn" id="license_new_activate_btn" ><i class="ri-save-line align-bottom me-1"></i> New Key License?</a>
+                                                </div>
+                                                <div class="mt-3">
+                                                    <span class="submit_smtp_form_status"></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    
+
+                                    </div>
+                                </div>
+
+                            </div>
+                            <!--end col-->
+                        </div>
+                        <!--end row-->            
+                        
+                    
+                    </div>
+                    <!-- container-fluid -->
+                </div>
+                <!-- End Page-content -->
+
+            {% block footer %}
+            {% include "partials/footer.html" %}
+            {% endblock footer %}
+            </div>
+            <!-- end main content-->
+{% endblock content %}

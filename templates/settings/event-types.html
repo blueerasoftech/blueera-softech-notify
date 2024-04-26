@@ -1,0 +1,123 @@
+{% extends "partials/base.html" %}
+{% load static %}
+{% block title %}Event Types{% endblock title %}
+{% block extra_css %}
+<!--datatable css-->
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+
+
+{% endblock extra_css %}
+{% block content %}
+            <!-- ============================================================== -->
+            <!-- Start right Content here -->
+            <!-- ============================================================== -->
+            <div class="main-content">
+
+                <div class="page-content">
+                    <div class="container-fluid">
+
+                        {% block pagetitle %}
+                        {% include "partials/page-title.html" with pagetitle="Config Data" title="Event Types" %}
+                        {% endblock pagetitle %}
+
+                        {% block alerts %}
+                            {% include "partials/errors.html" with messages=messages %}
+                        {% endblock alerts %}
+    
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <div class="card" id="orderList">
+                                    <div class="card-header border-1">
+                                        <div class="row align-items-center gy-3">
+                                            <div class="col-sm">
+                                                <h5 class="card-title mb-0">Event Types</h5>
+                                            </div>
+                                            <div class="col-sm-auto">
+                                                <div class="d-flex gap-1 flex-wrap">
+                                                    <a type="button" class="btn btn-success add-btn" id="create-btn" href="{% url 'apps.main.settings:event-types-sync' %}"><i class="ri-refresh-line align-bottom me-1"></i>Sync Now</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="card-body pt-0">
+                                        <div>
+                                            <div class="table-responsive table-card mb-1 mt-0">
+                                                <table class="table table-nowrap align-middle bes-datatable" id="eventTypesTable">
+                                                    <thead class="text-muted table-light">
+                                                        <tr class="text-uppercase">
+                                                            <th class="text-center">SR</th>
+                                                            <th class="text-center">Code</th>
+                                                            <th class="">Name</th>
+                                                            <th class="">Description</th>
+                                                            <th class="text-center">Alertable</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody class="list form-check-all">
+                                                     {% for eventType in eventTypes %}
+                                                        <tr>
+                                                            <td class="text-center">{{ forloop.counter }}</td>
+                                                            <td class="text-center">{{ eventType.code|default:"-" }}</td>
+                                                            <td class="">{{ eventType.name|default:"-" }}</td>
+                                                            <td class="">{{ eventType.description|default:"-" }}</td>
+                                                            <td class="text-center">
+                                                                {% if eventType.alertable == True %}<span class="badge badge-soft-success text-uppercase">Yes</span>{% else %}<span class="badge badge-soft-danger text-uppercase">No</span>{% endif %}
+                                                            </td>
+                                                        </tr>
+                                                        {% endfor %}
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+            
+                            </div>
+                            <!--end col-->
+                        </div>
+                        <!--end row-->            
+                        
+                    
+                    </div>
+                    <!-- container-fluid -->
+                </div>
+                <!-- End Page-content -->
+
+            {% block footer %}
+            {% include "partials/footer.html" %}
+            {% endblock footer %}
+            </div>
+            <!-- end main content-->
+{% endblock content %}
+
+{% block extra_js %}
+<!-- list.js min js -->
+{% comment %} <script src="{% static 'libs/list.js/list.min.js'%}"></script> {% endcomment %}
+
+<!--list pagination js-->
+{% comment %} <script src="{% static 'libs/list.pagination.js/list.pagination.min.js'%}"></script> {% endcomment %}
+
+<!--datatable js-->
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+
+<script>
+    $(document).ready(function () {
+
+    var oTable = $('#eventTypesTable').on( 'error.dt', function ( e, settings, techNote, message ) {
+        console.log( 'An error has been reported by DataTables: ', message );
+        $(".noresultContainer").show();
+    }).dataTable({
+        "ordering": false,
+        "searching": true,
+        "info": true,
+        "paging": true,
+        "dom": '<"top">rt<"bottom"lpi><"clear">',
+    });
+
+        // Apply Select2 to the child select element
+        var tableLengthDropdown = document.querySelector('.dataTables_length select');
+        new Choices(tableLengthDropdown,{ searchEnabled: false }); 
+
+    });
+</script>
+
+{% endblock extra_js %}

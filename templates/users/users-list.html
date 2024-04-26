@@ -1,0 +1,563 @@
+{% extends "partials/base.html" %}
+{% load static %}
+{% block title %}Users{% endblock title %}
+{% block extra_css %}
+
+<!--datatable css-->
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+{% endblock extra_css %}
+{% block content %}
+            <!-- ============================================================== -->
+            <!-- Start right Content here -->
+            <!-- ============================================================== -->
+            <div class="main-content">
+
+                <div class="page-content">
+                    <div class="container-fluid">
+
+                        {% block pagetitle %}
+                        {% include "partials/page-title.html" with pagetitle="Users" title="Users List" %}
+                        {% endblock pagetitle %}
+
+                        {% block alerts %}
+                            {% include "partials/errors.html" with messages=messages %}
+                           
+                        {% endblock alerts %}
+    
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <div class="card" id="usersList">
+                                    <div class="card-header border-0">
+                                        <div class="row align-items-center gy-3">
+                                            <div class="col-sm">
+                                                <h5 class="card-title mb-0">Users List</h5>
+                                            </div>
+                                            <div class="col-sm-auto btn btn-light p-0" style="border: 1px solid #e2e5ed;">
+                                                <input class="form-check-input" style="margin: 0.65rem 0 0.5rem 0.5rem;cursor:pointer;"  type="checkbox" id="globalCheckAll">
+                                                <label class="form-check-label" style="margin-left:5px; padding:0.5rem 0.9rem 0.5rem 0" for="globalCheckAll">
+                                                    Select All Users
+                                                </label>
+                                            </div>
+                                            <div class="col-sm-auto" style="padding-left:5px !important;padding-right:5px !important;">
+                                                <div class="d-flex gap-1 flex-wrap">
+                                                    <button id="enableConfirm" type="button" class="btn btn-success btn-label"><i class="ri-check-double-line label-icon align-middle fs-16 me-2"></i> Enable</button>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-auto" style="padding-left:5px !important;padding-right:5px !important;">
+                                                <div class="d-flex gap-1 flex-wrap">
+                                                    <button type="button" id="disableConfirm" class="btn btn-danger btn-label"><i class="ri-indeterminate-circle-line label-icon align-middle fs-16 me-2"></i> Disable</button>
+                                                </div>
+                                            </div>
+                                           
+                                            
+                                            <div class="col-sm-auto" style="padding-left:5px !important;padding-right:5px !important;">
+                                                <div class="d-flex gap-1 flex-wrap">
+                                                    <a type="button" class="btn btn-success add-btn btn-label" id="create-btn" href="{% url 'apps.main.users:users-sync' %}"><i class="ri-refresh-line label-icon align-bottom me-1"></i>Sync Now</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="card-body border border-dashed border-bottom-0 border-end-0 border-start-0">
+                                        <form>
+                                            <div class="row g-3">
+                                                <div class="col-5">
+                                                    <div class="search-box">
+                                                        <input type="text" id="searchBox" class="form-control search"
+                                                            placeholder="Search for Name, User ID, Designation, Department etc...">
+                                                        <i class="ri-search-line search-icon"></i>
+                                                    </div>
+                                                </div>
+                                                <!--end col-->
+                                                <div class="col-2">
+                                                </div>
+                                                <div class="col-5">
+                                                    <div class="row">
+                                                        <div class="col-4">
+                                                            <select class="form-control" data-choices data-choices-search-false
+                                                                name="choices-single-default" id="department_filter">
+                                                                <option value="" selected>All Departments</option>
+                                                                {% for department in departments %}
+                                                                    <option value="{{ department }}">{{ department }}</option>
+                                                                {% endfor %}
+                                                            </select>
+                                                        </div>
+                                                        <div class="col-4">
+                                                            <select class="form-control" data-choices data-choices-search-false
+                                                                name="choices-single-default" id="status_filter">
+                                                                <option value="" selected>All Status</option>
+                                                                <option value="1">Active</option>
+                                                                <option value="0">Inactive</option>
+                                                            </select>
+                                                        </div>
+                                                        <div class="col-4">
+                                                            <select class="form-control" data-choices data-choices-search-false
+                                                                name="choices-single-default" id="tna_status_filter">
+                                                                <option value="">All TNA Status</option>
+                                                                <option value="1" selected>Active</option>
+                                                                <option value="0">Inactive</option>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <!--end col-->
+                                            </div>
+                                            <!--end row-->
+                                        </form>
+                                    </div>
+                                    <div class="card-body pt-0">
+                                        <div class="mt-3">
+                                            <div class="table-responsive table-card mb-1">
+                                                <table class="table table-nowrap align-middle bes-datatable" id="usersTable">
+                                                    <thead class="text-muted table-light">
+                                                        <tr class="text-uppercase">
+                                                            <th scope="col" style="width: 25px;">
+                                                                <div class="form-check text-center">
+                                                                    <input class="form-check-input" type="checkbox" id="checkAll" value="option">
+                                                                </div>
+                                                            </th>
+                                                            <th class="text-center">Sr No</th>
+                                                            <th class="text-center">User ID</th>
+                                                            <th class="text-center">Title</th>
+                                                            <th class="">Name</th>
+                                                            <th class="">Department</th>
+                                                            <th class="">Company</th>
+                                                            <th class="text-center">Status</th>
+                                                            <th class="text-center">TNA Status</th>
+                                                            <th class="">Phone</th>
+                                                            <th class="">Phone 1</th>
+                                                            <th class="">Phone 2</th>
+                                                            <th class="">Email</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody class="list form-check-all">
+                                                    </tbody>
+                                                </table>
+                                                </div>
+                                            </div>
+                                            
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!--end col-->
+                        </div>
+                        <!--end row-->            
+                    </div>
+                    <!-- container-fluid -->
+                </div>
+                <!-- End Page-content -->
+
+
+                <!-- Modals -->
+                <div id="enableConfirmModal" class="modal fade" tabindex="-1" aria-labelledby="enableConfirmLabel" aria-hidden="true" style="display: none;">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="enableConfirmLabel">Enable User(s)</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"> </button>
+                            </div>
+                            <div class="modal-body">
+                                <h5 class="fs-15">
+                                </h5>
+                                <p class="text-muted" style="font-size:15px;">Do you want to enable selected user(s)?
+                                </p>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
+                                <button type="button" class="btn btn-success" id="enableUsers">Enable</button>
+                            </div>
+
+                        </div><!-- /.modal-content -->
+                    </div><!-- /.modal-dialog -->
+                </div>
+
+                <div id="disableConfirmModal" class="modal fade" tabindex="-1" aria-labelledby="disableConfirmLabel" aria-hidden="true" style="display: none;">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="disableConfirmLabel">Disable User(s)</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"> </button>
+                            </div>
+                            <div class="modal-body">
+                                <h5 class="fs-15">
+                                </h5>
+                                <p class="text-muted" style="font-size:15px;">Do you want to disable selected user(s)?
+                                </p>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
+                                <button type="button" class="btn btn-danger" id="disableUsers">Disable</button>
+                            </div>
+
+                        </div><!-- /.modal-content -->
+                    </div><!-- /.modal-dialog -->
+                </div>
+                <!-- /.modal -->
+
+
+
+
+
+            {% block footer %}
+            {% include "partials/footer.html" %}
+            {% endblock footer %}
+            </div>
+            <!-- end main content-->
+{% endblock content %}
+
+
+{% block extra_js %}
+
+<!--datatable js-->
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+<script>
+$(document).ready(function () {
+    var startDate;
+    var endDate;
+    var globalCheckAllState = false; // Initial state of globalCheckAll
+    var commaSeparatedUserIds = '';
+
+
+    //Datatable related Script
+    $.fn.dataTable.ext.errMode = 'none';
+    var oTable = $('#usersTable').on( 'error.dt', function ( e, settings, techNote, message ) {
+        console.log( 'An error has been reported by DataTables: ', message );
+        $(".noresultContainer").show();
+    }).dataTable({
+        "processing": true,
+        "serverSide": true,
+        "paging": true,
+        "lengthChange": true,
+        "lengthMenu": [10, 25, 50, 100],
+        "info": true,
+        "ordering": false,
+        "searching": true,
+        "ajax": {
+            url: "{{ ajax_url }}",
+            type: "POST",
+            beforeSend: function () {
+                $('#spinner-div').show();
+            },
+            complete: function (data) {
+                $('#spinner-div').hide();
+            },
+            async: false,    //This line is very important to make expose value of statusArray Globally
+            data: function (d) {
+                // Add the date range parameters to the Ajax request
+                d.start_date = startDate;
+                d.end_date = endDate;
+            }, 
+            dataSrc: "data",
+        },
+        "drawCallback": function (data) {
+            //console.log(data);
+           //If data is not availble then it will show noresult image
+           if (data.oAjaxData.length <= 0){
+                $(".noresultContainer").show();
+            }
+        },
+        "rowCallback": function(nRow, aData, iDisplayIndex) {
+            var oSettings = this.fnSettings();
+            // Get the DataTables API instance
+            var api = this.api();
+          
+            // Calculate the serial number based on the current page, display start, and index
+            var serialNumber = oSettings._iDisplayStart + iDisplayIndex + 1;
+          
+            // Modify the second column (index 1) to display the serial number
+            api.cell(nRow, 1).data(serialNumber);
+          
+        
+            // Return the modified row
+            return nRow;
+        },
+        "columns": [
+                    {
+                        "data": "id",
+                        "render": function (data, type, row) {
+                            var checkboxHtml = `<div class="form-check text-center">
+                                                <input class="form-check-input checkEach" type="checkbox" value="${data}" ${globalCheckAllState ? 'checked' : ''}>
+                                            </div>`;
+                            return checkboxHtml;
+                        }
+                    }, 
+                    { "data" : "user_id",
+                        createdCell: function (td, cellData, rowData, row, col) {
+                            $(td).css('text-align', 'center');
+                        }
+                    },//This is just fake entry to avoid error of AJAX, SR numbers are loaded with iDislayIndex configured above
+                    { "data" : "user_id",
+                        createdCell: function (td, cellData, rowData, row, col) {
+                            $(td).css('text-align', 'center');}
+                    },
+                    { "data" : "title",
+                        createdCell: function (td, cellData, rowData, row, col) {
+                            $(td).css('text-align', 'center');}
+                    },
+                    { "data": "name" },
+                    { "data": "department" },
+                    { "data": "company",
+                        "render": function(data, type, row) {
+                            return data ? data : '-';
+                        } 
+                    },
+                    {
+                        "data": "active",
+                        "render": function (data, type, row) {
+                        // Apply the getDeliveryStatusBadge function fetch status badge
+                        return getUserStatus(data);
+                        },
+                        createdCell: function (td, cellData, rowData, row, col) {
+                            $(td).css('text-align', 'center');
+                        }
+                    },
+                    {
+                        "data": "external_active_flag",
+                        "render": function (data, type, row) {
+                        // Apply the getDeliveryStatusBadge function fetch status badge
+                        return getUserStatus(data);
+                        },
+                        createdCell: function (td, cellData, rowData, row, col) {
+                            $(td).css('text-align', 'center');
+                        }
+                    },
+                    { 
+                        "data": "phone",
+                        "render": function(data, type, row) {
+                            return data ? data : '-';
+                        }
+                    },
+                    { 
+                        "data": "whatsapp_number_one",
+                        "render": function(data, type, row) {
+                            return data ? data : '-';
+                        }
+                    },
+                    { 
+                        "data": "whatsapp_number_two",
+                        "render": function(data, type, row) {
+                            return data ? data : '-';
+                        }
+                    },
+                    { 
+                        "data": "email",
+                        "render": function(data, type, row) {
+                            return data ? data : '-';
+                        } 
+                    },
+                    
+        ],
+        "dom": '<"top">rt<"bottom"lpi><"clear">'
+        //t = table, l = length, i = information, p = pagination
+
+    });
+
+    function getUserStatus(user_status) {
+        if (user_status === false || user_status === 'false') {
+        return '<span class="badge badge-soft-danger text-uppercase">In-Active</span>';
+        } else  {
+        return '<span class="badge badge-soft-success text-uppercase">Active</span>';
+        }
+    }
+
+    // Apply Select2 to length of dataTable
+    var tableLengthDropdown = document.querySelector('.dataTables_length select');
+    new Choices(tableLengthDropdown,{ searchEnabled: false });
+    
+    //End of Datatable related Script
+
+
+    //Search & Filters
+    var oTableapi = oTable.api();
+    var department = $("#department_filter").val();
+    var status = $("#status_filter").val();
+    var tna_status = $("#tna_status_filter").val();
+    var search_value = '';
+
+    $("#searchBox").on('keyup', function (){
+        oTable.fnFilter(this.value);
+        search_value = this.value;
+    });
+
+    $("#department_filter, #status_filter, #tna_status_filter").change(function() {
+        department = $("#department_filter").val();
+        status = $("#status_filter").val();
+        tna_status = $("#tna_status_filter").val();
+        oTableapi.ajax.url('{{ ajax_url }}?department=' + department + '&status=' + status + '&tna_status=' + tna_status + '&search[value]=' + search_value).load();
+
+    });
+    //End of Search & Filters
+
+
+    //global check all checkbox
+    $('#globalCheckAll').change(function() {
+        //oTable.$("input[type='checkbox']").attr('checked', $(this).is(":checked"));  
+        //$('#checkAll').attr('checked', $(this).is(":checked"));
+        globalCheckAllState = $(this).prop('checked');
+        if (globalCheckAllState === true){
+            commaSeparatedUserIds = 'all';
+        }else{
+            commaSeparatedUserIds = '';
+        }
+        $("#checkAll").prop("checked", $(this).prop('checked')); 
+        oTable.api().draw();
+
+    }); 
+    // Deselect "Check All" when changing pages
+    oTable.on("page.dt", function() {
+        if ($('#globalCheckAll').prop('checked') === false){
+            $("#checkAll").prop("checked", false); 
+        }
+    });
+    //End of global check all checkbox
+
+
+    //check all on same page
+    $('#usersTable').on('change', '#checkAll', function() {
+        var isChecked = $(this).prop('checked');
+        $('.checkEach').prop('checked', isChecked);
+        fetchCheckBoxValues();
+    });
+    //Change status of checkall checkbox individual checkbox enable disable
+    $('#usersTable').on('change', '.checkEach', function() {
+        fetchCheckBoxValues();
+        var allChecked = true;
+
+        $('.checkEach').each(function() {
+            if (!$(this).prop('checked')) {
+                allChecked = false;
+                $('#globalCheckAll').prop('checked', allChecked);
+                return false; // Exit the loop early
+            }
+        });
+        console.log('individual checkbox',allChecked);
+        $('#checkAll').prop('checked', allChecked);
+        
+
+    });
+ 
+    //End of check all on same page
+
+
+    //Fetch value of checkbox
+    function fetchCheckBoxValues(){
+        // Initialize an empty array to store selected user IDs
+        var selectedUserIds = [];
+            
+        // Loop through only the selected checkboxes with class "checkEach"
+        $('.checkEach:checked').each(function() {
+            var checkboxValue = $(this).val();
+            
+            // Store the selected checkbox value (user ID) in the array
+            selectedUserIds.push(checkboxValue);
+        });
+
+        // Create a comma-separated string from the selected user IDs
+        commaSeparatedUserIds = selectedUserIds.join(', ');
+
+        // Use commaSeparatedUserIds string as needed.
+        console.log('Selected user IDs:', commaSeparatedUserIds);
+    }
+    //End of Fetch value of checkbox
+
+
+    
+    // Enable or Disable Users 
+    function changeUserStatus(updatestatus){
+        var requestData = {
+            user_ids: commaSeparatedUserIds,
+            update_status: updatestatus,
+            department: department,
+            status: status,
+            tna_status: tna_status,
+            'search[value]':search_value
+        };
+        
+
+        // Send the Ajax request
+        $.ajax({
+            type: 'POST', // Change to 'POST' if needed
+            url: "{{status_update_ajax_url}}",
+            data: requestData,
+            beforeSend: function () {
+                $('#spinner-div').show();
+            },
+            complete: function () {
+                $('#spinner-div').hide();
+            },
+            success: function(data) {
+                // Handle success response
+                console.log('Status update Ajax request was successful:', data.success);
+                if(data.success === false){
+                    displayLocalError(data.error_msg, 'alert-danger');
+                }else{
+                    displayLocalError('Your request was processed successfully.', 'alert-success');
+                }
+                oTable.api().draw();
+            },
+            error: function(xhr, status, error) {
+                // Handle error response
+                console.error('Status update Ajax request error:', error);
+                displayLocalError('User status updation failed', 'alert-danger');
+            }
+        });
+    }
+    var messages = '';
+    $('#enableConfirm').on('click', function() {
+        if (commaSeparatedUserIds.trim() === '') {
+            displayLocalError('Please select at least one user', 'alert-danger');
+            return; // Exit the function
+        }else {
+            $('#enableConfirmModal').modal('show');
+        }
+    });
+    $('#enableUsers').on('click', function() {
+        $('#enableConfirmModal').modal('hide')
+        var status = '1';
+        changeUserStatus(status);
+        commaSeparatedUserIds = '';
+    });
+
+    $('#disableConfirm').on('click', function() {
+        if (commaSeparatedUserIds.trim() === '') {
+            displayLocalError('Please select at least one user', 'alert-danger');
+            return; // Exit the function
+        }else {
+            $('#disableConfirmModal').modal('show');
+        }
+    });
+    $('#disableUsers').on('click', function() {
+        $('#disableConfirmModal').modal('hide')
+        var status = '0';
+        changeUserStatus(status);
+        commaSeparatedUserIds = '';
+    });
+    //End of Enable or Disable Users 
+
+
+    //Local Page Error Handling
+    function displayLocalError(message, className) {
+        var localErrorBlock = $('#localError');
+        localErrorBlock.removeClass();
+        localErrorBlock.addClass('alert ' + className + ' alert-dismissible fade show');
+        localErrorBlock.find('span').text(message);
+        localErrorBlock.show();
+        setTimeout(function() {
+            localErrorBlock.hide();
+        }, 6000);
+    }
+    $('.customErrorClose').on('click', function() {
+        var localErrorBlock = $('#localError'); 
+        localErrorBlock.hide();
+    });
+    //End of Local Page Error Handling
+
+         
+}); 
+
+          
+</script>
+
+
+{% endblock extra_js %}
+

@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-Pass with QR Code</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Libre+Caslon+Text:wght@400;700&family=Playfair+Display:wght@500&family=Roboto:wght@400;500&display=swap')
+
+        body {
+            width: 700px;
+            height: auto;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0;
+            padding: 0;
+        }
+
+        #qrCodeBox {
+            height: auto;
+            width: 100%;
+            background: #fffffd;
+            border: 1px solid #244593;
+        }
+
+        .top-banner{
+            text-align: center;
+        }
+
+        .indian-fire-security-logo img{
+            height: auto;
+            width: 100%;
+        }
+
+        .barcode-logo{
+            text-align: center;
+        }
+
+        .barcode-logo img{
+            height: 320px;
+            width: auto;
+            margin-top: -40px;
+        }
+
+        
+        .user-name {
+            text-align:center;
+            margin-bottom: 10px;
+            margin-top: -20px;
+            font-size: 32px;
+            color: #244593;
+            font-weight: 700;
+            font-family: "Roboto", sans-serif;
+        }
+
+        .company-name {
+            text-align:center;
+            margin-top: 10px;
+            font-size: 28px;
+            font-family: "Roboto", sans-serif;
+            color: #244593;
+            font-weight: 400;
+        }
+
+        .powerd-by-text {
+            text-align:center;
+            margin-top: 40px;
+            font-size: 20px;
+            font-family: "Roboto", sans-serif;
+            color: #000000;
+            font-weight: 400;
+            padding-bottom: 10px;
+        }
+
+        .powerd-by-text span {
+            font-weight: 700;
+        }
+
+        .hero_content {
+            width: 100%;
+            margin-bottom: -20px;
+        }
+
+        .hero_content .content_left img {
+            width: 90%;
+        }
+        .hero_content .content_right img {
+            width: 100%;
+        }
+
+        .hero_content .content_left{
+            width: 59%;
+            text-align: left;
+            display: inline-block;
+        }
+
+        .hero_content .content_right{
+            width: 39%;
+            text-align: right;
+            display: inline-block;
+        }
+
+        .top-banner,
+        .barcode-logo{
+            margin-top:50px;
+        }
+        .top-banner img{
+            height: auto;
+            width: 100%;
+        }
+        
+
+    </style>
+</head>
+<body>
+
+<div id="qrCodeBox">
+        <div class="hero_content">
+            <div class="content_left">
+                <img src="{{ top_left }}"/>
+            </div>
+            <div class="content_right">
+                <img src="{{ top_right }}"/>
+            </div>
+        </div>
+
+        <div class="top-banner">
+            <img src="{{ middle }}"/>
+        </div>
+
+        <div class="barcode-logo">
+            <img src="{{ qr_code }}"/>
+        </div>
+       
+        <div class="user-name">
+            <span>{{ userName }}</span>
+        </div>
+
+        <div class="company-name">
+            <span>{{ companyName }}</span>
+        </div>
+
+        <div class="powerd-by-text">
+            E-Pass Powered By <span>BlueEra Softech</span>
+        </div>
+</div>
+
+</body>
+</html>

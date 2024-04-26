@@ -1,0 +1,65 @@
+{% extends 'account/base.html' %}
+{% load static %}
+{% load i18n %}
+{% comment %} {% load account socialaccount %} {% endcomment %}
+{% load crispy_forms_tags %}
+
+{% block title %}{% endblock title %}
+    
+{% block content %}
+                    <div class="card mt-4 custom-card">
+                        <div class="card-body p-4">
+                            <div class="mt-2">
+                                <h5 class="text-primary">Register Account</h5>
+                                <p class="text-muted">Get your Free BlueEra Softech Notify account now.</p>
+                            </div>
+
+                            <div class="mt-4">
+                                <form class="needs-validation" novalidate method="post" action="{% url 'account_signup' %}">
+                                    {% include "partials/errors.html" with messages=messages %}
+                                    {% if field.help_text %}
+                                        <div class="alert alert-danger mb-4" role="alert">
+                                            <strong>{{ field.help_text }}</strong>
+                                        </div>
+                                    {% endif %}
+                                    {% csrf_token %}
+                                    <div class="mb-2 row">
+                                        <div class="col-lg-6 col-md-6 col-xl-6">
+                                            {{form.first_name|as_crispy_field }}
+                                        </div>
+                                        <div class="col-lg-6 col-md-6 col-xl-6">
+                                            {{form.last_name|as_crispy_field }}
+                                        </div>
+                                    </div>
+                                    <div class="mb-3">
+                                        {{form.email|as_crispy_field }}
+                                    </div>
+                                    <div class="mb-3">
+                                        {{form.username|as_crispy_field }}
+                                    </div>
+                                    
+                                    <div class="mb-2">
+                                        {{form.password1|as_crispy_field }}
+                                    </div>
+
+                                    <div class="mb-2">
+                                        {{form.password2|as_crispy_field }}
+                                    </div>
+
+                                    <div class="mb-4">
+                                        <p class="mb-0 fs-12 text-muted fst-italic">By registering you agree to the BlueEra Softech Notify <a href="#" class="text-primary text-decoration-underline fst-normal fw-medium">Terms of Use</a></p>
+                                    </div>
+                                    
+                                    <div class="mt-4">
+                                        <button class="btn btn-success w-100" type="submit">Sign Up</button>
+                                    </div>
+                                </form>
+                                
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-4 text-center">
+                        <p class="mb-0">Already have an account ? <a href="{{ account_login }}" class="fw-semibold text-primary text-decoration-underline"> Signin </a> </p>
+                    </div>
+{% endblock content %}

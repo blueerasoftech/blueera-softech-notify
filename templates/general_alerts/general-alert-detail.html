@@ -1,0 +1,205 @@
+{% extends "partials/base.html" %}
+{% load static %}
+{% block title %}General Alert Details{% endblock title %}
+{% block extra_css %}
+<link href="{% static 'select2/select2.css'%}" rel="stylesheet" type="text/css" />
+<style>
+    .is-disabled .choices__list--multiple .choices__item {
+        background-color: #405189 !important;
+        border: 1px solid #405189 !important;
+    }
+    .choices__list--multiple .choices__item {
+        margin-bottom: -2px !important;
+        padding: 4px 10px !important;
+        
+    }
+</style>
+{% endblock extra_css %}
+{% block content %}
+            <!-- ============================================================== -->
+            <!-- Start right Content here -->
+            <!-- ============================================================== -->
+            <div class="main-content">
+
+                <div class="page-content">
+                    <div class="container-fluid">
+
+                        {% block pagetitle %}
+                        {% include "partials/page-title.html" with pagetitle="General Alerts" title="General Alert Detail" %}
+                        {% endblock pagetitle %}
+
+                        {% block alerts %}
+                            {% include "partials/errors.html" with messages=messages %}
+                        {% endblock alerts %}
+
+                        <div class="row">
+                            <div class="col-lg-9">
+                                <div class="card" id="orderList">
+                                    <form method="POST" id="alert_type_form" enctype="multipart/form-data" action="{% url 'apps.main.general_alerts:general-alert-update' %}">
+                                        <div class="card-header border-1">
+                                            <div class="row align-items-center gy-3">
+                                                <div class="col-sm-auto">
+                                                    <h5 class="card-title mb-0">Select Alert Type</h5>
+                                                </div>
+                                                <div class="col-sm-4">
+                                                    <div>
+                                                        {% csrf_token %}
+                                                        <input type="hidden" class="form-control" name="id" id="ga_alert_id" value="{{ ga_alert.id|default:'0' }}" placeholder="">
+
+                                                        <select class="form-control" data-choices data-choices-search-false
+                                                            name="alerts_type" id="alertType" {% if ga_alert.id > 0 %} disabled {% endif %}>
+                                                            <option value="broadcast" {% if ga_alert.alerts_type == 'broadcast' %}selected{% endif %}>Broadcast</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                {% if notifications_count > 0 %}
+                                                    <div class="col-sm-6 text-end">
+                                                        <a href="{% url 'apps.main.general_alerts:general-alert-detail-notifications' general_alert_id=ga_alert.id %}" class="btn btn-primary add-btn" style="margin-left: 10px" id="template_parameters"><i class="ri-file-list-line align-middle me-1"></i> View Notifications</a>
+                                                    </div>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    
+                                            <div class="card-body">
+                                                
+                                                <div class="mt-3 col-xxl-6 col-md-6 form-check form-switch form-switch-success">
+                                                    <input class="form-check-input" type="checkbox" role="switch" id="enableAlert" name="active" {% if ga_alert.active == True %}checked{% endif %}>
+                                                    <label class="form-check-label" for="enableAlert">Enable Alert</label>
+                                                </div>
+
+                                                <div class="mt-4 row">
+                                                    <div class="col-xxl-6 col-md-6">
+                                                        <label for="name" class="form-label">Alert Name</label>
+                                                        <input type="text" class="form-control" name="name" id="alert_name" value="{{ ga_alert.name|default:"" }}" placeholder="Name of Alert">
+                                                    </div>
+
+                                                    <div id="div_cron_date_time" class="col-xxl-6 col-md-6">
+                                                        <label for="cron_date_time" class="form-label">Select Date & Time on which you would like to send Broadcast.</label>
+                                                        <input type="text" class="form-control flatpickr-input" data-provider="flatpickr" name="cron_date_time" id="cron_date_time"  data-date-format="d M, Y" data-enable-time="" readonly="readonly" value="{{ cron_date_time_str }}">
+                                                    </div>
+                                                </div>
+
+
+                                                <div class="mt-4 row">
+                                                    <div class="col-xxl-6 col-md-6">
+                                                        <label for="name" class="form-label">Select CSV File to Upload</label>
+                                                        <input type="file" class="form-control" name="csv_file" id="csv_file" value="{{ csv_file_url|default:"" }}" placeholder="CSV File" accept=".csv">
+                                                        {% if csv_file_url and csv_file_url != "" %}
+                                                            <div style="padding-top: 8px">
+                                                                <span><strong>Current File </strong>: {{ ga_alert.csv_file_name|default:'' }}</span>
+                                                            </div>
+                                                        {% endif %}
+                                                    </div>
+                                                </div>
+           
+
+                                                {% if ga_alert and ga_alert.id > 0 %}
+                                                    <div class="mt-3 row">
+                                                        <div class="col-xxl-6 col-md-6">
+                                                            <label for="phone_numbers" class="form-label">WhatsApp Numbers Fields</label>
+                                                            <select class="form-control" data-choices data-choices-search-false multiple disabled readonly
+                                                                    name="phone_numbers" id="phone_numbers">
+                                                                    {% for field in Fields %}
+                                                                        <option value="{{ field }}" {% if field in phone_number_fields %} selected {% endif %}>{{ field }}</option>
+                                                                    {% endfor %}
+                                                            </select>
+                                                        </div>
+                                                        {% if ga_alert and ga_alert.id > 0 %}
+                                                            <div class="col-xxl-6 col-md-6" style="max-width: 250px;">
+                                                                <label for="phone_numbers" class="form-label" style="color: white !important;">.</label>
+                                                                <a href="{% url 'apps.main.general_alerts:general-alert-phone-numbers' general_alert_id=ga_alert.id %}" class="btn btn-success add-btn d-flex" id="template_parameters"><i class="ri-pencil-line align-bottom me-1"></i> Edit Phone Number Field</a>
+                                                            </div>
+                                                        {% endif %}
+                                                    </div>
+                                                {% endif %}
+
+
+                        
+                                                <div class="mt-3 row">
+                                                    <div class="col-xxl-6 col-md-6">
+                                                        <label for="whatsappTemplate" class="form-label">Select WhatsApp Template</label>
+                                                        <select class="form-control" data-choices data-choices-search-false
+                                                                name="whatsapp_template" id="whatsappTemplate">
+                                                                {% for whatsapp_template in whatsapp_templates %}
+                                                                    <option value="{{ whatsapp_template.name }}" {% if ga_alert.whatsapp_template and ga_alert.whatsapp_template.name == whatsapp_template.name %} selected {% endif %}>{{ whatsapp_template.name }}</option>
+                                                                {% endfor %}
+                                                        </select>
+                                                    </div>
+                                                    {% if ga_alert and ga_alert.id > 0 %}
+                                                        <div class="col-xxl-6 col-md-6" style="max-width: 250px;">
+                                                            <label for="template_parameters" class="form-label" style="color: white !important;">.</label>
+                                                            <a href="{% url 'apps.main.general_alerts:general-alert-detail-parameter' general_alert_id=ga_alert.id %}" class="btn btn-success add-btn d-flex" id="template_parameters"><i class="ri-pencil-line align-bottom me-1"></i> Edit Template Parameters</a>
+                                                        </div>
+                                                    {% endif %}
+                                                </div>
+
+
+
+
+                                            
+    
+                                                <div class="col-sm-auto mt-4">
+                                                    <div class="gap-1 flex-wrap">
+                                                        <button type="submit" class="btn btn-success add-btn" id="profile_submit_btn"><i class="ri-save-line align-bottom me-1"></i> Submit</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+            
+                            </div>
+                            <!--end col-->
+                        </div>
+                        <!--end row-->
+                    </div>
+                    <!-- container-fluid -->
+                </div>
+                <!-- End Page-content -->
+
+            {% block footer %}
+            {% include "partials/footer.html" %}
+            {% endblock footer %}
+            </div>
+            <!-- end main content-->
+{% endblock content %}
+
+{% block extra_js %}
+
+<!-- list.js min js -->
+<script src="{% static 'select2/select2.js'%}"></script>
+
+<!-- list.js min js -->
+<!-- <script src="{% static 'libs/list.js/list.min.js'%}"></script> -->
+
+<!--list pagination js-->
+<!-- <script src="{% static 'libs/list.pagination.js/list.pagination.min.js'%}"></script> -->
+
+
+        <script>
+            var alertType = document.getElementById("alertType");
+            var alertTypeChoices = new Choices(alertType, {
+                searchEnabled: false,
+            });
+
+            $("#alertType").change(function() {
+                var selectedAlert = $(this).val();
+                console.log("Selected Alert :: " + selectedAlert);
+                $('#div_cron_date_time').show();
+                if (selectedAlert === "broadcast") {
+                    $('#div_cron_date_time').show();
+                }
+
+            })
+
+
+
+            var whatsappTemplate = document.getElementById("whatsappTemplate");
+            var whatsappTemplateChoices = new Choices(whatsappTemplate, {
+                searchEnabled: true,
+            });
+                       
+        </script>
+        
+
+{% endblock extra_js %}

@@ -1,0 +1,39 @@
+{% extends 'account/base.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block title %}404 Error | BlueEra WhatsApp Utility{% endblock title %}
+
+
+{% block content %}
+                <style>
+                    .error-basic-img {
+                        max-width: 220px !important;
+                        margin-top: -40px;
+                    }
+                </style>
+                <div class="col-lg-12">
+                    <div class="row justify-content-center">
+                        <div class="col-xl-12 text-center">
+                            {% include "partials/errors.html" with messages=messages %}
+                            <div class="error-500 position-relative">
+                                <img src="{% static 'images/error500.png'%}" alt="" class="img-fluid error-500-img error-img" />
+                                <h1 class="title text-muted">500</h1>
+                            </div>
+                            <div>
+                                <h4>Internal Server Error!</h4>
+                                <p class="text-muted w-75 mx-auto">Server Error 500. We're not exactly sure what happened, but our servers say something is wrong.</p>
+                                <a href="{% url 'apps.main.dashboards:dashboard'%}" class="btn btn-success"><i class="mdi mdi-home me-1"></i>Back to home</a>
+                            </div>
+                        </div><!-- end col-->
+                    </div>
+                </div>
+
+                <div class="mt-4 text-center">
+                    <p class="mb-0">Don't have License Key ? <a href="https://blueerasoftech.com/contact-us" class="fw-semibold text-primary text-decoration-underline"> Contact Us </a> </p>
+                </div>
+{% endblock content %}
+
+{% block extra_js %}
+        
+{% endblock extra_js %}
