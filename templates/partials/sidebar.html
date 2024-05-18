@@ -107,9 +107,9 @@
                                     <li class="nav-item">
                                         <a href="{% url 'apps.main.settings:whatsapp-numbers-settings' %}" class="nav-link" data-key="t-whatsapp_numbers_settings">WhatsApp Numbers</a>
                                     </li>
-                                    <li class="nav-item">
+                                    {% comment %} <li class="nav-item">
                                         <a href="{% url 'apps.main.settings:database-settings' %}" class="nav-link" data-key="t-database_settings">Database</a>
-                                    </li>
+                                    </li> {% endcomment %}
                                     <li class="nav-item">
                                         <a href="{% url 'apps.main.settings:email-settings' %}" class="nav-link" data-key="t-email_settings">Email</a>
                                     </li>

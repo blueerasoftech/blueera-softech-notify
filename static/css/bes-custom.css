@@ -444,3 +444,8 @@ form input:-internal-autofill-selected {
     border-top: 1px solid #999;
     margin: 2rem 0;
   }
+
+
+  #hint_id_password {
+    float: right;
+  }

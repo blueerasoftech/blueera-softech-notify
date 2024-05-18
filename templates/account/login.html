@@ -29,16 +29,16 @@
                                     </div>
 
                                     <div class="mb-3 position-relative">
-                                        <div class="float-end">
-                                            <a href="{% url 'account_reset_password' %}" class="text-muted">Forgot password?</a>
-                                        </div>
                                         <div class="auth-pass-inputgroup">
                                             {{ form.password|as_crispy_field }}
                                         </div>
-                                        <button class="btn btn-link position-absolute mt-4 end-0 top-0 text-decoration-none text-muted password-addon" type="button" id="password-addon"><i class="ri-eye-fill align-middle"></i></button>
+                                        {% comment %} <button class="btn btn-link position-absolute mt-4 end-0 top-0 text-decoration-none text-muted password-addon" type="button" id="password-addon"><i class="ri-eye-fill align-middle"></i></button> {% endcomment %}
+                                        {% comment %} <div class="float-end">
+                                            <a href="{% url 'account_reset_password' %}" class="text-muted">Forgot password?</a>
+                                        </div> {% endcomment %}
                                     </div>
 
-                                    <div class="form-check">
+                                    <div class="form-check col-6">
                                         {{ form.remember|as_crispy_field }}
                                     </div>
                                     
@@ -46,8 +46,6 @@
                                         <button class="btn btn-success w-100" type="submit">Sign In</button>
                                     </div>
                                 </form>
-                                
-                                
                             </div>
                         </div>
                     </div>
@@ -60,6 +58,18 @@
 
 {% block extra_js %}
         <!-- password-addon init -->
-        <script src="{% static 'js/pages/password-addon.init.js'%}"></script>
+        {% comment %} <script src="{% static 'js/pages/password-addon.init.js'%}"></script> {% endcomment %}
+
+        <script>
+            document.addEventListener("DOMContentLoaded", function() {
+                document.querySelectorAll("small").forEach(function(element) {
+                    var link = element.querySelector("a");
+                    if (link && link.textContent.trim().toLowerCase() === "forgot your password?") {
+                        link.textContent = "Forgot password?";
+                    }
+                });
+            });
+        </script>
+        
 {% endblock extra_js %}
     
