@@ -60,11 +60,13 @@
                         </li>
 
 
-                        <li class="nav-item">
-                            <a class="nav-link menu-link" href="{% url 'apps.main.general_alerts:general-alerts-list' %}" >
-                                <i class="ri-broadcast-line"></i> <span data-key="general-alerts">General Alerts</span>
-                            </a>
-                        </li>
+                        {% if configData and configData.is_wa_settings_default == False %}
+                            <li class="nav-item">
+                                <a class="nav-link menu-link" href="{% url 'apps.main.general_alerts:general-alerts-list' %}" >
+                                    <i class="ri-broadcast-line"></i> <span data-key="general-alerts">General Alerts</span>
+                                </a>
+                            </li>
+                        {% endif %}
 
 
                         <li class="nav-item">

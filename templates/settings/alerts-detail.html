@@ -229,15 +229,17 @@
                                                         <span class="text-muted pt-2" style="display: block;">Would you like to send all notifications send to each user to admin numbers configured <a href="{% url 'apps.main.settings:whatsapp-numbers-settings' %}">here</a>.</span>
                                                     </div>
 
-                                                    <hr class="custom" />
 
-                                                    <div id="divAdditionalWhatsappNumbers" class="row" style="{% if alert.alerts_type == 'user_sync' %} display: none; {% endif %}">
-                                                        <div class="col-xxl-12 col-md-12">
-                                                            <label for="name" class="form-label">Additional WhatsApp Number(s)</label>
-                                                            <input type="text" class="form-control" name="additional_whatsapp_numbers" id="additional_whatsapp_numbers" value="{{ alert.additional_whatsapp_numbers|default:"" }}" placeholder="9876543210, 9876543211">
-                                                            <span class="text-muted pt-2" style="display: block;">Enter multiple mobile numbers with comma(,) seperated. Also input mobile numbers without 0 or +. Any number configured here would start receiving all the messages for this alert. If any further assistance is required then <a href="https://blueerasoftech.com">Get In Touch</a></span>
+                                                    {% if configData.is_wa_settings_default == False %}
+                                                        <hr class="custom" />
+                                                        <div id="divAdditionalWhatsappNumbers" class="row" style="{% if alert.alerts_type == 'user_sync' %} display: none; {% endif %}">
+                                                            <div class="col-xxl-12 col-md-12">
+                                                                <label for="name" class="form-label">Additional WhatsApp Number(s)</label>
+                                                                <input type="text" class="form-control" name="additional_whatsapp_numbers" id="additional_whatsapp_numbers" value="{{ alert.additional_whatsapp_numbers|default:"" }}" placeholder="9876543210, 9876543211">
+                                                                <span class="text-muted pt-2" style="display: block;">Enter multiple mobile numbers with comma(,) seperated. Also input mobile numbers without 0 or +. Any number configured here would start receiving all the messages for this alert. If any further assistance is required then <a href="https://blueerasoftech.com">Get In Touch</a></span>
+                                                            </div>
                                                         </div>
-                                                    </div>
+                                                    {% endif %}
                                                 
                                                     <hr class="custom" />
         
