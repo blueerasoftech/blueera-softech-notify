@@ -21,7 +21,7 @@
                         {% endblock alerts %}
     
                         <div class="row">
-                            <div class="col-xl-9">
+                            <div class="col-xl-7">
 
                                 <div class="card" id="integration_card">
                                     <div class="card-header border-1">
@@ -134,6 +134,77 @@
 
                             </div>
                             <!--end col-->
+
+
+
+                            <div class="col-xl-5">
+
+                                <div class="card" id="whatsapp_message_settings">
+                                    <div class="card-header border-1">
+                                        <div class="row align-items-center gy-3">
+                                            <div class="col-sm">
+                                                <h5 class="card-title mb-0">WhatsApp Message Counts
+                                                </h5>
+                                            </div>
+                                            <div class="col-sm-auto">
+                                                <div class="d-flex gap-1 flex-wrap">
+                                                    <a type="button" class="btn btn-success add-btn" id="refresh-whatsapp-msg" href="{% url 'apps.main.settings:license-settings-refresh-whatsapp-messages' %}"><i class="ri-refresh-line align-bottom me-1"></i> Refresh</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                                {% if configData and configData.is_wa_settings_default == True %}
+
+                                    <div class="card" id="license_card">
+                                        <div class="card-header border-1">
+                                            {% comment %} <div class="row align-items-center gy-3">
+                                                <div class="col-sm">
+                                                    <h5 class="card-title mb-0">WhatsApp Message Count</h5>
+                                                </div>
+                                            </div> {% endcomment %}
+
+                                            <div class="row align-items-center mt-1 gy-3">
+                                                <div class="col-auto">
+                                                    <h5>#Utility Messages: </h5>
+                                                </div>
+                                                <div class="col-auto">
+                                                    <div>
+                                                        {% if configData.api_utility_msg_unlmited == True %}
+                                                            <h5 style="color:#a12642;">Unlimited</h5>
+                                                        {% else %}
+                                                            <h5 style="color:#a12642;">{{ configData.api_utility_msg|default:'0' }}</h5>
+                                                        {% endif %}
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="row align-items-center mt-3 gy-3">
+                                                <div class="col-auto">
+                                                    <h5>#Marketing Messages: </h5>
+                                                </div>
+                                                <div class="col-auto">
+                                                    <div>
+                                                        {% if configData.api_marketing_msg_unlmited == True %}
+                                                            <h5 style="color:#a12642;">Unlimited</h5>
+                                                        {% else %}
+                                                            <h5 style="color:#a12642;">{{ configData.api_marketing_msg|default:'0' }}</h5>
+                                                        {% endif %}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        
+
+                                        </div>
+                                    </div>
+                                {% endif %}
+
+                            </div>
+
+
+
                         </div>
                         <!--end row-->            
                         
