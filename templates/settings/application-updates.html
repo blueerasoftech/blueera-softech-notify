@@ -1,0 +1,83 @@
+{% extends "partials/base.html" %}
+{% load static %}
+{% block title %}Software Updates{% endblock title %}
+{% block extra_css %}
+{% endblock extra_css %}
+{% block content %}
+            <!-- ============================================================== -->
+            <!-- Start right Content here -->
+            <!-- ============================================================== -->
+            <div class="main-content">
+
+                <div class="page-content">
+                    <div class="container-fluid">
+
+                        {% block pagetitle %}
+                        {% include "partials/page-title.html" with pagetitle="Settings" title="Software Updates" %}
+                        {% endblock pagetitle %}
+
+                        {% block alerts %}
+                            {% include "partials/errors.html" with messages=messages %}
+                        {% endblock alerts %}
+    
+                        <div class="row">
+                            <div class="col-xl-7">
+
+                                <div class="card" id="integration_card">
+                                    <div class="card-header border-1">
+                                        <div class="row align-items-center gy-3">
+                                            <div class="col-sm">
+                                                <h5 class="card-title mb-0">Check of Software Updates: 
+                                                </h5>
+                                            </div>
+                                            <div class="col-sm-auto">
+                                                <div class="d-flex gap-1 flex-wrap">
+                                                    <a type="button" class="btn btn-success add-btn" id="create-alert-btn" href="{% url 'apps.main.settings:application-updates-update-available' %}"><i class="ri-refresh-line align-bottom me-1"></i> Check for Updates</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                                {% if update_available and update_available == True %}
+                                    <div class="card" id="update_confirmation">
+                                        <div class="card-header border-1">
+
+                                            <div class="row align-items-center gy-3 mt-1">
+                                                <div class="row align-items-center mt-0 gy-3">
+                                                    <div class="col-auto">
+                                                        <h5>New Software Update is availabe. Would you like to update it?</h5>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-auto mt-3">
+                                                    <div class="gap-1 flex-wrap">
+                                                        <a type="button" href="{% url 'apps.main.settings:application-updates-update-application' %}" class="btn btn-success add-btn" id="license_new_activate_btn" ><i class="ri-save-line align-bottom me-1"></i>Confirm Update</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        
+
+                                        </div>
+                                    </div>
+                                {% endif %}
+
+                                </div>
+                            <!--end col-->
+
+
+                        </div>
+                        <!--end row-->            
+                        
+                    
+                    </div>
+                    <!-- container-fluid -->
+                </div>
+                <!-- End Page-content -->
+
+            {% block footer %}
+            {% include "partials/footer.html" %}
+            {% endblock footer %}
+            </div>
+            <!-- end main content-->
+{% endblock content %}
