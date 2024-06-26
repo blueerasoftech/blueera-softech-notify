@@ -467,8 +467,10 @@ form input:-internal-autofill-selected {
 }
 
 
-.select2-container--default .select2-selection--single .select2-selection__clear {
-  height: 36px;
-  margin-right: 33px;
-  z-index: 999;
+.select2-container .select2-search--inline .select2-search__field {
+  margin-top: 10px !important;
+  margin-left: 10px !important;
+}
+.select2-container .select2-selection--multiple .select2-selection__rendered {
+  padding: 0 !important;
 }
