@@ -56,18 +56,46 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                        
-
                                         </div>
                                     </div>
                                 {% endif %}
-
                                 </div>
                             <!--end col-->
 
 
                         </div>
-                        <!--end row-->            
+                        <!--end row-->   
+                        
+                        
+                        {% if isErrorForGit and isErrorForGit == True %}
+                            <div class="row">
+                                <div class="col-lg-7">
+                                    <div class="card">
+                                        <div class="card-header align-items-center d-flex">
+                                            <div class="flex-grow-1">
+                                                <h4 class="card-title mb-0">Manually check and update application</h4>
+                                            </div>
+                                        </div><!-- end card header -->
+        
+                                        <div class="card-body">
+                                            <p class="text-muted">Please follow below mention step to manually check for application update and update the application if new version is available.</p>
+        
+                                            <div class="live-preview">
+                                                <p class="text-primary mb-2">Step 1: Open Command Prompt</p>
+                                                <pre class="language-markup" tabindex="0"><code class="language-markup">Open Command Prompt</code></pre>
+                                                <p class="text-primary mt-3 mb-2">Step 2: Run Following Command</p>
+                                                <pre class="language-markup" tabindex="0"><code class="language-markup">cd {{ project_root }}</code></pre>
+                                                <p class="text-primary mt-3 mb-2">Step 3: Run Command</p>
+                                                <pre class="language-markup" tabindex="0"><code class="language-markup">env\Scripts\activate</code></pre>
+                                                <p class="text-primary mt-3 mb-2">Step 4: Run following command</p>
+                                                <pre class="language-markup" tabindex="0"><code class="language-markup">python update_app.pyc</code></pre>
+                                            </div>
+                                        </div><!-- end card-body -->
+                                    </div><!-- end card -->
+                                </div>
+                                <!-- end col -->
+                            </div>
+                        {% endif %}
                         
                     
                     </div>
