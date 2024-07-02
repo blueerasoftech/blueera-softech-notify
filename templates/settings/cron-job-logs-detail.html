@@ -1,0 +1,107 @@
+{% extends "partials/base.html" %}
+{% load static %}
+{% block title %}Cron Job Log Detail{% endblock title %}
+{% block extra_css %}
+<link href="{% static 'select2/select2.css'%}" rel="stylesheet" type="text/css" />
+{% endblock extra_css %}
+{% block content %}
+            <!-- ============================================================== -->
+            <!-- Start right Content here -->
+            <!-- ============================================================== -->
+            <div class="main-content">
+
+                <div class="page-content">
+                    <div class="container-fluid">
+
+                        {% block pagetitle %}
+                        {% include "partials/page-title.html" with pagetitle="Config Data" title="Cron Job Log Detail" %}
+                        {% endblock pagetitle %}
+
+                        {% block alerts %}
+                            {% include "partials/errors.html" with messages=messages %}
+                        {% endblock alerts %}
+    
+                        <div class="row">
+                            <div class="col-lg-9">
+                                <div class="card" id="orderList">
+                                    <div class="card-header border-0 mt-2 pb-0">
+                                        <div class="row align-items-center gy-3">
+                                            <div class="col-sm-auto">
+                                                <h5>Name :</h5>
+                                            </div>
+                                            <div class="col-sm-9">
+                                                <div>
+                                                    <h5>{{ cronJobLog.name }}</h5>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="card-body">
+
+                                        <div class="border p-4 pt-3">
+                                            <div class="">
+                                                <div class="table-responsive">
+                                                    <table class="table mb-0">
+                                                        <tbody>
+                                                            <tr>
+                                                                <th scope="row" style="min-width: 120px;">Cron ID</th>
+                                                                <td>{{ cronJobLog.cron_job.cron_id }}</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <th scope="row">Last Processed Date Time</th>
+                                                                <td>{{ cronJobLog.last_processed_datetime|date:'d-m-Y h:i A'|default:'' }}</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <th scope="row">Last Processed ID</th>
+                                                                <td>{{ cronJobLog.last_processed_id|default:'-' }}</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <th scope="row">Alert Name</th>
+                                                                <td>{% if cronJobLog.cron_job.alert is not None %} {{ cronJobLog.cron_job.alert.name }} {% else %} - {% endif %}</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <th scope="row">Used in Alerts</th>
+                                                                <td>{{ cronJobLog.last_processed_datetime|date:'d-m-Y h:i A'|default:'' }}</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <th scope="row">Response Data</th>
+                                                                <td>{{ cronJobLog.response_data|default:"-" }}</td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>  
+                                        </div>
+                                    </div>
+                                </div>
+            
+                            </div>
+                            <!--end col-->
+                        </div>
+                        <!--end row-->
+                        
+                    </div>
+                    <!-- container-fluid -->
+                </div>
+                <!-- End Page-content -->
+
+            {% block footer %}
+            {% include "partials/footer.html" %}
+            {% endblock footer %}
+            </div>
+            <!-- end main content-->
+{% endblock content %}
+
+{% block extra_js %}
+
+<!-- list.js min js -->
+<script src="{% static 'select2/select2.js'%}"></script>
+
+<!-- list.js min js -->
+<script src="{% static 'libs/list.js/list.min.js'%}"></script>
+
+<!--list pagination js-->
+<script src="{% static 'libs/list.pagination.js/list.pagination.min.js'%}"></script>
+
+{% endblock extra_js %}
