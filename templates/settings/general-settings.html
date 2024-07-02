@@ -101,6 +101,45 @@
                                                 <div class="col-xxl-6 col-md-6">
                                                 </div>
                                             </div>
+
+
+
+
+
+
+                                            <hr class="custom" />
+
+                                            <div id="divEnableLogs" class="mt-4 row">
+                                                <div class="col-xxl-6 col-md-6">
+                                                    <div class="form-check form-switch form-switch-success">
+                                                        <input class="form-check-input" type="checkbox" role="switch" id="enable_cron_logs" name="enable_cron_logs" {% if configData.enable_cron_logs == True %}checked{% endif %}>
+                                                        <label class="form-check-label" for="enable_cron_logs">Enable Cron Logs for Debug?</label>
+                                                        <span class="text-muted pt-2" style="display: block;">Would you like to enable cron logs for time being to validate the data for development purpose. For any further assistance <a href="https://blueerasoftech.com">Get in Touch</a></span>
+                                                    </div>
+
+
+                                                    <div id="div_delete_cron_logs_after_7_days" class="form-check mt-4" style="{% if configData.enable_cron_logs == False %}display: none{% endif %}">
+                                                        <input class="form-check-input" type="checkbox" name="delete_cron_logs_after_7_days" id="delete_cron_logs_after_7_days" {% if configData.delete_cron_logs_after_7_days == True %}checked{% endif %}>
+                                                        <label class="form-check-label" for="delete_cron_logs_after_7_days">
+                                                            Would you like to delete logs data after 7 days? For that you need to select datetime till which it should store logs data.
+                                                        </label>
+                                                    </div>
+
+                                                    <div id="div_datetime_till_cron_logs" class="mt-4" style="{% if configData.delete_cron_logs_after_7_days == False %}display: none{% endif %}">
+                                                        <label for="datetime_till_cron_logs" class="form-label">Select datetime till when would you like to log data. <br><span class="text-muted">Keep blank for storing data forever.</span></label>
+                                                        <input type="text" class="form-control flatpickr-input" style="max-width: 310px" data-provider="flatpickr" name="datetime_till_cron_logs" id="datetime_till_cron_logs" data-date-format="M d, Y H:i" data-enable-time="" data-minDate="{% now "M d, Y H:i" %}" readonly="readonly" value="{{ configData.datetime_till_cron_logs|date:'M d, Y H:i'|default:'' }}">
+                                                    </div>
+
+
+                                                </div>
+                                                <div class="col-xxl-6 col-md-6">
+                                                </div>
+                                            </div>
+
+
+
+
+
                                             
 
                                             <div class="col-sm-auto mt-4 mb-4">
@@ -146,5 +185,45 @@
         placeholder: "Select any one",
         minimumResultsForSearch: -1
      });
+
+
+     document.addEventListener("DOMContentLoaded", function() {
+        const checkbox = document.getElementById("enable_cron_logs");
+        const divDatetimeTillCronLogs = document.getElementById("div_datetime_till_cron_logs");
+        const divDeleteCronLogsAfter7Days = document.getElementById("div_delete_cron_logs_after_7_days");
+
+        checkbox.addEventListener("change", function() {
+            if (checkbox.checked) {
+                divDeleteCronLogsAfter7Days.style.display = "block";
+                var checkboxDeleteCronLogs = document.getElementById("delete_cron_logs_after_7_days");
+                if (checkboxDeleteCronLogs.checked) {
+                    divDeleteCronLogsAfter7Days.style.display = "block";
+                } else {
+                    divDeleteCronLogsAfter7Days.style.display = "none";
+                }
+            } else {
+                divDatetimeTillCronLogs.style.display = "none";
+                divDeleteCronLogsAfter7Days.style.display = "none";
+            }
+        });
+    });
+
+
+
+
+
+    document.addEventListener("DOMContentLoaded", function() {
+        const checkbox = document.getElementById("delete_cron_logs_after_7_days");
+        const divDatetimeTillCronLogs1 = document.getElementById("div_datetime_till_cron_logs");
+
+        checkbox.addEventListener("change", function() {
+            if (checkbox.checked) {
+                divDatetimeTillCronLogs1.style.display = "block";
+            } else {
+                divDatetimeTillCronLogs1.style.display = "none";
+            }
+        });
+    });
+
 </script>
 {% endblock extra_js %}
