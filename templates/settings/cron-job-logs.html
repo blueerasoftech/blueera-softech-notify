@@ -50,6 +50,7 @@
                                                             <th class="text-center">Cron Id</th>
                                                             <th class="text-center">Last Processed DateTime</th>
                                                             <th class="text-center">Last Processed ID</th>
+                                                            <th class="text-center">Updated At</th>
                                                             <th class="text-center">Has Data?</th>
                                                             <th class="text-center">Action</th>
                                                         </tr>
@@ -62,6 +63,7 @@
                                                             <td class="text-center">{{ cronJobLog.cron_job.cron_id|default:"" }}</td>
                                                             <td class="text-center">{{ cronJobLog.last_processed_datetime|date:'d-m-Y h:i A'|default:'' }}</td>
                                                             <td class="text-center">{{ cronJobLog.last_processed_id|default:'-' }}</td>
+                                                            <td class="text-center">{{ cronJobLog.updated_at|date:'d-m-Y h:i A'|default:'' }}</td>
                                                             <td class="text-center">
                                                                 {% if cronJobLog.has_data == True %}<span class="badge badge-soft-success text-uppercase">Yes</span>{% else %}<span class="badge badge-soft-danger text-uppercase">No</span>{% endif %}
                                                             </td>
