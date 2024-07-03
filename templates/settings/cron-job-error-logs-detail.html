@@ -1,6 +1,6 @@
 {% extends "partials/base.html" %}
 {% load static %}
-{% block title %}Cron Job Log Detail{% endblock title %}
+{% block title %}Cron Job Error Log Detail{% endblock title %}
 {% block extra_css %}
 <link href="{% static 'select2/select2.css'%}" rel="stylesheet" type="text/css" />
 {% endblock extra_css %}
@@ -14,7 +14,7 @@
                     <div class="container-fluid">
 
                         {% block pagetitle %}
-                        {% include "partials/page-title.html" with pagetitle="Config Data" title="Cron Job Log Detail" %}
+                        {% include "partials/page-title.html" with pagetitle="Config Data" title="Cron Job Error Log Detail" %}
                         {% endblock pagetitle %}
 
                         {% block alerts %}
@@ -31,7 +31,7 @@
                                             </div>
                                             <div class="col-sm-9">
                                                 <div>
-                                                    <h5>{{ cronJobLog.name }}</h5>
+                                                    <h5>{{ cronJobErrorLog.name }}</h5>
                                                 </div>
                                             </div>
                                         </div>
@@ -46,27 +46,27 @@
                                                         <tbody>
                                                             <tr>
                                                                 <th scope="row" style="min-width: 120px;">Cron ID</th>
-                                                                <td>{{ cronJobLog.cron_job.cron_id }}</td>
+                                                                <td>{{ cronJobErrorLog.cron_job.cron_id }}</td>
                                                             </tr>
                                                             <tr>
-                                                                <th scope="row">Last Processed Date Time</th>
-                                                                <td>{{ cronJobLog.last_processed_datetime|date:'d-m-Y h:i A'|default:'' }}</td>
-                                                            </tr>
-                                                            <tr>
-                                                                <th scope="row">Last Processed ID</th>
-                                                                <td>{{ cronJobLog.last_processed_id|default:'-' }}</td>
+                                                                <th scope="row">Date Time</th>
+                                                                <td>{{ cronJobErrorLog.updated_at|date:'d-m-Y h:i A'|default:'' }}</td>
                                                             </tr>
                                                             <tr>
                                                                 <th scope="row">Alert Name</th>
-                                                                <td>{% if cronJobLog.cron_job.alert is not None %} {{ cronJobLog.cron_job.alert.name }} {% else %} - {% endif %}</td>
+                                                                <td>{% if cronJobErrorLog.cron_job.alert is not None %} {{ cronJobErrorLog.cron_job.alert.name }} {% else %} - {% endif %}</td>
                                                             </tr>
                                                             <tr>
                                                                 <th scope="row">Request Data</th>
-                                                                <td>{{ cronJobLog.request_data|default:"-" }}</td>
+                                                                <td>{{ cronJobErrorLog.request_data|default:"-" }}</td>
                                                             </tr>
                                                             <tr>
                                                                 <th scope="row">Response Data</th>
-                                                                <td>{{ cronJobLog.response_data|default:"-" }}</td>
+                                                                <td>{{ cronJobErrorLog.response_data|default:"-" }}</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <th scope="row">Error</th>
+                                                                <td>{{ cronJobErrorLog.error|default:"-" }}</td>
                                                             </tr>
                                                         </tbody>
                                                     </table>
