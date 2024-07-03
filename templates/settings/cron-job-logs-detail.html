@@ -65,6 +65,10 @@
                                                                 <td>{{ cronJobLog.last_processed_datetime|date:'d-m-Y h:i A'|default:'' }}</td>
                                                             </tr>
                                                             <tr>
+                                                                <th scope="row">Request Data</th>
+                                                                <td>{{ cronJobLog.request_data|default:"-" }}</td>
+                                                            </tr>
+                                                            <tr>
                                                                 <th scope="row">Response Data</th>
                                                                 <td>{{ cronJobLog.response_data|default:"-" }}</td>
                                                             </tr>

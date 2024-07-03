@@ -66,7 +66,7 @@
                                                                 {% if cronJobLog.has_data == True %}<span class="badge badge-soft-success text-uppercase">Yes</span>{% else %}<span class="badge badge-soft-danger text-uppercase">No</span>{% endif %}
                                                             </td>
                                                             <td class="text-center">
-                                                                <a type="button" class="btn btn-success add-btn btn-label" id="retry-btn" href="{% url 'apps.main.settings:cron-job-logs-detail' cron_job_log_id=cronJobLog.id %}"><i class="ri-refresh-line label-icon align-bottom me-1"></i>Retry</a>
+                                                                <a type="button" class="btn btn-success add-btn btn-label" id="retry-btn" href="{% url 'apps.main.settings:cron-job-logs-detail' cron_job_log_id=cronJobLog.id %}"><i class="ri-eye-fill fs-16 label-icon align-bottom me-1"></i>View</a>
                                                             </td>
                                                         </tr>
                                                         {% endfor %}
