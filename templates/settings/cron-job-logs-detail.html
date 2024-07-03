@@ -53,6 +53,10 @@
                                                                 <td>{{ cronJobLog.last_processed_datetime|date:'d-m-Y h:i A'|default:'' }}</td>
                                                             </tr>
                                                             <tr>
+                                                                <th scope="row">Date Time</th>
+                                                                <td>{{ cronJobLog.updated_at|date:'d-m-Y h:i A'|default:'' }}</td>
+                                                            </tr>
+                                                            <tr>
                                                                 <th scope="row">Last Processed ID</th>
                                                                 <td>{{ cronJobLog.last_processed_id|default:'-' }}</td>
                                                             </tr>
