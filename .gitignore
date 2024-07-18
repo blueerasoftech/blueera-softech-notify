@@ -7,8 +7,10 @@
 *.sqlite
 *.db
 
-# Ignore media files
-/media/
+# Ignore everything in the media folder
+/media/*
+# Except web.config file
+!/media/web.config
 
 # Ignore compiled Python files
 __pycache__/
